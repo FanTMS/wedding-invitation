@@ -1,0 +1,1278 @@
+/* Сброс стилей и базовые настройки */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --primary-color: #90EE90;
+    --secondary-color: #66CDAA;
+    --accent-color: #F0FFF0;
+    --light-green: #E6FFE6;
+    --medium-green: #B3FFB3;
+    --dark-green: #228B22;
+    --text-dark: #2F4F2F;
+    --text-light: #556B2F;
+    --white: #ffffff;
+    --gradient-primary: linear-gradient(135deg, #90EE90 0%, #E6FFE6 100%);
+    --gradient-secondary: linear-gradient(135deg, #66CDAA 0%, #90EE90 100%);
+    --gradient-hero: linear-gradient(135deg, #F0FFF0 0%, #E6FFE6 50%, #90EE90 100%);
+    --shadow-light: 0 2px 10px rgba(144, 238, 144, 0.1);
+    --shadow-medium: 0 4px 20px rgba(144, 238, 144, 0.15);
+    --shadow-heavy: 0 8px 30px rgba(144, 238, 144, 0.2);
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    line-height: 1.6;
+    color: var(--text-dark);
+    background: var(--accent-color);
+    overflow-x: hidden;
+}
+
+/* Фоновые элементы */
+.bg-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.floating-hearts {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.floating-hearts i {
+    position: absolute;
+    color: var(--primary-color);
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+}
+
+.floating-hearts i:nth-child(1) {
+    left: 10%;
+    top: 20%;
+    font-size: 20px;
+    animation-delay: 0s;
+}
+
+.floating-hearts i:nth-child(2) {
+    right: 10%;
+    top: 60%;
+    font-size: 15px;
+    animation-delay: 2s;
+}
+
+.floating-hearts i:nth-child(3) {
+    left: 60%;
+    top: 10%;
+    font-size: 25px;
+    animation-delay: 4s;
+}
+
+.floating-hearts i:nth-child(4) {
+    right: 30%;
+    top: 80%;
+    font-size: 18px;
+    animation-delay: 1s;
+}
+
+.floating-hearts i:nth-child(5) {
+    left: 30%;
+    top: 70%;
+    font-size: 22px;
+    animation-delay: 3s;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+.bg-pattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 25% 25%, #90EE90 1px, transparent 1px),
+        radial-gradient(circle at 75% 75%, #66CDAA 1px, transparent 1px);
+    background-size: 100px 100px;
+    opacity: 0.03;
+}
+
+/* Контейнер */
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    background: var(--white);
+    box-shadow: var(--shadow-heavy);
+    position: relative;
+    z-index: 1;
+}
+
+/* Hero секция */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: var(--gradient-hero);
+    text-align: center;
+    padding: 60px 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Фоновые фотографии в hero */
+.hero-photos {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+}
+
+.hero-photo {
+    position: absolute;
+    width: 200px;
+    height: 300px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-heavy);
+    opacity: 0.3;
+    transition: all 0.3s ease;
+}
+
+.hero-photo.left {
+    top: 20%;
+    left: 5%;
+    transform: rotate(-15deg);
+}
+
+.hero-photo.right {
+    top: 60%;
+    right: 5%;
+    transform: rotate(15deg);
+}
+
+.hero-photo:hover {
+    opacity: 0.6;
+    transform: scale(1.05) rotate(0deg);
+}
+
+.hero-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.photo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 0.9em;
+}
+
+.photo-placeholder i {
+    font-size: 2em;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.hero-content {
+    max-width: 600px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Переключатель между датой и фото */
+.hero-display-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px 0;
+}
+
+.toggle-btn {
+    padding: 10px 20px;
+    border: 2px solid var(--primary-color);
+    background: transparent;
+    color: var(--primary-color);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.toggle-btn:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.toggle-btn.active {
+    background: var(--primary-color);
+    color: var(--white);
+    box-shadow: var(--shadow-light);
+}
+
+/* Главное фото пары */
+.wedding-photo {
+    margin: 40px 0;
+}
+
+.main-couple-photo {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    margin: 0 auto;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: var(--shadow-heavy);
+    background: rgba(255,255,255,0.9);
+}
+
+.main-couple-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: none;
+}
+
+.main-photo-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-light);
+    font-size: 1.1em;
+}
+
+.main-photo-placeholder i {
+    font-size: 3em;
+    margin-bottom: 15px;
+    color: var(--primary-color);
+}
+
+.ornament {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin: 30px 0;
+}
+
+.ornament i {
+    color: var(--secondary-color);
+    font-size: 1.5em;
+}
+
+.ornament .fa-heart {
+    color: var(--primary-color);
+    font-size: 1.8em;
+}
+
+.main-title {
+    font-family: 'Dancing Script', cursive;
+    margin: 40px 0;
+}
+
+.couple-names {
+    display: block;
+    font-size: 4em;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.wedding-text {
+    display: block;
+    font-size: 1.8em;
+    font-weight: 400;
+    color: var(--secondary-color);
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.wedding-date {
+    margin: 40px 0;
+    padding: 30px;
+    background: rgba(255,255,255,0.9);
+    border-radius: 15px;
+    box-shadow: var(--shadow-light);
+}
+
+.date-number {
+    display: block;
+    font-size: 4em;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.date-month {
+    display: block;
+    font-size: 1.5em;
+    color: var(--text-dark);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.invitation-text {
+    font-size: 1.3em;
+    color: var(--text-dark);
+    font-weight: 300;
+    line-height: 1.8;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.scroll-indicator {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: bounce 2s infinite;
+}
+
+.scroll-indicator i {
+    font-size: 2em;
+    color: var(--secondary-color);
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+    40% { transform: translateX(-50%) translateY(-10px); }
+    60% { transform: translateX(-50%) translateY(-5px); }
+}
+
+/* Общие стили секций */
+section {
+    padding: 80px 40px;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-header h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 20px;
+}
+
+.section-divider {
+    width: 80px;
+    height: 3px;
+    background: var(--gradient-secondary);
+    margin: 0 auto;
+    border-radius: 2px;
+}
+
+/* Цитата */
+.quote-section {
+    background: var(--accent-color);
+    text-align: center;
+}
+
+.quote-content {
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+}
+
+.quote-icon {
+    font-size: 3em;
+    color: var(--primary-color);
+    margin-bottom: 30px;
+}
+
+blockquote {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8em;
+    font-style: italic;
+    color: var(--text-dark);
+    line-height: 1.6;
+    margin-bottom: 30px;
+}
+
+cite {
+    font-size: 1.1em;
+    color: var(--text-light);
+    font-style: normal;
+}
+
+/* Программа мероприятия */
+.program {
+    background: var(--white);
+}
+
+.timeline-modern {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.timeline-item-modern {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 50px;
+    position: relative;
+}
+
+.timeline-item-modern:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 30px;
+    top: 70px;
+    width: 2px;
+    height: 50px;
+    background: var(--gradient-secondary);
+}
+
+.timeline-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--gradient-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 30px;
+    box-shadow: var(--shadow-medium);
+    flex-shrink: 0;
+}
+
+.timeline-icon i {
+    font-size: 1.5em;
+    color: var(--text-dark);
+}
+
+.timeline-content {
+    flex: 1;
+    padding-top: 5px;
+}
+
+.timeline-time {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.timeline-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.timeline-content p {
+    color: var(--text-light);
+    margin-bottom: 10px;
+    line-height: 1.5;
+}
+
+.timeline-note {
+    font-size: 0.9em;
+    color: var(--secondary-color);
+    font-style: italic;
+}
+
+/* Дресс-код */
+.dress-code-modern {
+    background: var(--accent-color);
+}
+
+.dress-code-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.dress-code-text p {
+    font-size: 1.2em;
+    color: var(--text-light);
+    margin-bottom: 40px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.color-palette-modern {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.color-item {
+    text-align: center;
+}
+
+.color-circle {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    margin: 0 auto 10px;
+    border: 3px solid var(--primary-color);
+    box-shadow: var(--shadow-light);
+    transition: transform 0.3s ease;
+}
+
+.color-circle:hover {
+    transform: scale(1.1);
+}
+
+.color-item span {
+    font-size: 0.9em;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.dress-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 20px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 10px;
+    color: var(--text-light);
+}
+
+.dress-note i {
+    color: var(--primary-color);
+}
+
+/* Локация */
+.location-modern {
+    background: var(--white);
+}
+
+.location-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.location-info {
+    margin-bottom: 40px;
+}
+
+.location-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-bottom: 30px;
+    padding: 25px;
+    background: var(--accent-color);
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.location-item:hover {
+    transform: translateY(-5px);
+}
+
+.location-item i {
+    font-size: 1.5em;
+    color: var(--primary-color);
+    margin-top: 5px;
+}
+
+.location-item h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.location-item p {
+    color: var(--text-light);
+}
+
+.location-actions {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+    justify-content: center;
+}
+
+.btn-modern {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 25px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+}
+
+.btn-modern.primary {
+    background: var(--gradient-primary);
+    color: var(--text-dark);
+    box-shadow: var(--shadow-light);
+}
+
+.btn-modern.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.btn-modern.secondary {
+    background: transparent;
+    color: var(--primary-color);
+    border: 2px solid var(--primary-color);
+}
+
+.btn-modern.secondary:hover {
+    background: var(--primary-color);
+    color: var(--white);
+}
+
+.location-image {
+    position: relative;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: var(--shadow-medium);
+}
+
+.location-image img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, rgba(102, 205, 170, 0.8), rgba(144, 238, 144, 0.8));
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    cursor: pointer;
+}
+
+.location-image:hover .image-overlay {
+    opacity: 1;
+}
+
+.location-image:hover img {
+    transform: scale(1.05);
+}
+
+.image-overlay i {
+    font-size: 3em;
+    color: var(--white);
+    margin-bottom: 10px;
+    animation: pulse 2s infinite;
+}
+
+.image-overlay span {
+    color: var(--white);
+    font-weight: 500;
+    font-size: 1.1em;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+/* RSVP форма */
+.rsvp-modern {
+    background: var(--accent-color);
+}
+
+.rsvp-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.rsvp-description {
+    text-align: center;
+    font-size: 1.2em;
+    color: var(--text-light);
+    margin-bottom: 50px;
+    font-family: 'Cormorant Garamond', serif;
+}
+
+.rsvp-form {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: var(--shadow-medium);
+    margin-bottom: 40px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.form-group-modern {
+    margin-bottom: 30px;
+}
+
+.form-group-modern label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.form-group-modern input,
+.form-group-modern textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: border-color 0.3s ease;
+    background: var(--white);
+}
+
+.form-group-modern input:focus,
+.form-group-modern textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.radio-group-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.radio-modern {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.radio-modern:hover {
+    border-color: var(--primary-color);
+    background: var(--accent-color);
+}
+
+.radio-modern input[type="radio"] {
+    display: none;
+}
+
+.radio-custom {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 50%;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 2px;
+    transition: border-color 0.3s ease;
+}
+
+.radio-modern input[type="radio"]:checked + .radio-custom {
+    border-color: var(--primary-color);
+}
+
+.radio-modern input[type="radio"]:checked + .radio-custom::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background: var(--primary-color);
+    border-radius: 50%;
+}
+
+.radio-text strong {
+    display: block;
+    color: var(--text-dark);
+    margin-bottom: 5px;
+}
+
+.radio-text small {
+    color: var(--text-light);
+    font-size: 0.9em;
+}
+
+.btn-submit {
+    width: 100%;
+    padding: 18px;
+    background: var(--gradient-secondary);
+    color: var(--white);
+    border: none;
+    border-radius: 25px;
+    font-size: 1.2em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-medium);
+}
+
+.telegram-info {
+    text-align: center;
+    padding: 20px;
+    background: rgba(255,255,255,0.7);
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.telegram-info i {
+    font-size: 2em;
+    color: var(--secondary-color);
+}
+
+.telegram-info p {
+    color: var(--text-light);
+    font-size: 0.9em;
+}
+
+/* Виртуальный тур */
+.virtual-tour-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 2000;
+    animation: fadeIn 0.3s ease;
+}
+
+.virtual-tour-modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.virtual-tour-content {
+    background: var(--white);
+    border-radius: 20px;
+    max-width: 90%;
+    max-height: 90%;
+    overflow: hidden;
+    position: relative;
+    box-shadow: var(--shadow-heavy);
+}
+
+.virtual-tour-header {
+    padding: 20px;
+    background: var(--gradient-primary);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.virtual-tour-header h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5em;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.close-tour {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: var(--text-dark);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.close-tour:hover {
+    background: rgba(0,0,0,0.1);
+}
+
+.virtual-tour-iframe {
+    width: 800px;
+    height: 600px;
+    border: none;
+}
+
+.tour-placeholder {
+    width: 800px;
+    height: 600px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: var(--text-light);
+}
+
+.tour-placeholder i {
+    font-size: 4em;
+    margin-bottom: 20px;
+    color: var(--primary-color);
+}
+
+.tour-placeholder h4 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: var(--text-dark);
+}
+
+.tour-placeholder p {
+    text-align: center;
+    line-height: 1.6;
+}
+
+/* Футер */
+.footer {
+    background: var(--text-dark);
+    color: var(--white);
+    padding: 60px 40px 20px;
+}
+
+.footer-content {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.couple-photo-modern {
+    margin-bottom: 30px;
+}
+
+.couple-photo-modern img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--primary-color);
+    box-shadow: var(--shadow-medium);
+}
+
+.footer-text h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5em;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.couple-signature {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2em;
+    font-weight: 600;
+    margin-bottom: 30px;
+}
+
+.contact-info p {
+    margin-bottom: 10px;
+    color: #999;
+}
+
+.contact-info a {
+    color: var(--primary-color);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 5px;
+    transition: color 0.3s ease;
+}
+
+.contact-info a:hover {
+    color: var(--white);
+}
+
+.footer-bottom {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #444;
+    text-align: center;
+}
+
+.footer-bottom p {
+    color: #999;
+    font-size: 0.9em;
+}
+
+/* Модальное окно */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal.show {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--white);
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    max-width: 400px;
+    margin: 20px;
+    box-shadow: var(--shadow-heavy);
+    animation: slideIn 0.3s ease;
+}
+
+.modal-icon i {
+    font-size: 4em;
+    color: var(--primary-color);
+    margin-bottom: 20px;
+}
+
+.modal-content h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    color: var(--text-dark);
+}
+
+.modal-content p {
+    color: var(--text-light);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .container {
+        margin: 0;
+        box-shadow: none;
+    }
+    
+    section {
+        padding: 60px 20px;
+    }
+    
+    .hero {
+        padding: 40px 20px;
+    }
+    
+    .couple-names {
+        font-size: 2.5em;
+    }
+    
+    .wedding-text {
+        font-size: 1.4em;
+    }
+    
+    .date-number {
+        font-size: 3em;
+    }
+    
+    .date-month {
+        font-size: 1.2em;
+    }
+    
+    .invitation-text {
+        font-size: 1.1em;
+    }
+    
+    .section-header h2 {
+        font-size: 2em;
+    }
+    
+    blockquote {
+        font-size: 1.4em;
+    }
+    
+    .timeline-item-modern {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .timeline-item-modern:not(:last-child)::after {
+        display: none;
+    }
+    
+    .timeline-icon {
+        margin: 0 auto 20px;
+    }
+    
+    .color-palette-modern {
+        gap: 15px;
+    }
+    
+    .color-circle {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .location-actions {
+        flex-direction: column;
+    }
+    
+    .rsvp-form {
+        padding: 30px 20px;
+    }
+    
+    .modal-content {
+        margin: 10px;
+        padding: 30px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .couple-names {
+        font-size: 2em;
+    }
+    
+    .wedding-text {
+        font-size: 1.2em;
+    }
+    
+    .date-number {
+        font-size: 2.5em;
+    }
+    
+    .invitation-text {
+        font-size: 1em;
+    }
+    
+    .ornament {
+        gap: 10px;
+    }
+    
+    .ornament i {
+        font-size: 1.2em;
+    }
+    
+    .timeline-time {
+        font-size: 1.5em;
+    }
+    
+    .timeline-content h3 {
+        font-size: 1.3em;
+    }
+    
+    /* Адаптивность для hero фотографий */
+    .hero-photo {
+        width: 120px;
+        height: 180px;
+    }
+    
+    .hero-photo.left {
+        top: 15%;
+        left: 2%;
+    }
+    
+    .hero-photo.right {
+        top: 65%;
+        right: 2%;
+    }
+    
+    .main-couple-photo {
+        width: 250px;
+        height: 320px;
+    }
+    
+    .hero-display-toggle {
+        gap: 8px;
+        margin: 20px 0;
+    }
+    
+    .toggle-btn {
+        padding: 8px 15px;
+        font-size: 0.8em;
+        gap: 5px;
+    }
+    
+    /* Виртуальный тур на мобильных */
+    .virtual-tour-content {
+        max-width: 95%;
+        max-height: 95%;
+    }
+    
+    .virtual-tour-iframe,
+    .tour-placeholder {
+        width: 100%;
+        height: 400px;
+    }
+    
+    .virtual-tour-header {
+        padding: 15px;
+    }
+    
+    .virtual-tour-header h3 {
+        font-size: 1.2em;
+    }
+}

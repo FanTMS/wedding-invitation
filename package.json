@@ -1,0 +1,30 @@
+{
+  "name": "wedding-invitation-site",
+  "version": "1.0.0",
+  "description": "Современный свадебный сайт-приглашение с управлением через Telegram бота",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "echo 'No build step required for static site'"
+  },
+  "keywords": [
+    "wedding",
+    "invitation",
+    "telegram-bot",
+    "supabase",
+    "wedding-site"
+  ],
+  "author": "Wedding Site Creator",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "helmet": "^7.0.0",
+    "compression": "^1.7.4",
+    "@supabase/supabase-js": "^2.38.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

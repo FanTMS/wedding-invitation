@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Свадебное приглашение</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <style>
+        /* Принудительные зеленые стили для критических элементов */
+        :root {
+            --primary-color: #90EE90 !important;
+            --secondary-color: #66CDAA !important;
+            --accent-color: #F0FFF0 !important;
+            --text-dark: #2F4F2F !important;
+            --text-light: #556B2F !important;
+        }
+        
+        body {
+            background: #F0FFF0 !important;
+            color: #2F4F2F !important;
+        }
+        
+        .hero {
+            background: linear-gradient(135deg, #F0FFF0 0%, #E6FFE6 50%, #90EE90 100%) !important;
+        }
+        
+        .date-number {
+            color: #90EE90 !important;
+        }
+        
+        .wedding-text {
+            color: #66CDAA !important;
+        }
+        
+        .toggle-btn {
+            border-color: #90EE90 !important;
+            color: #90EE90 !important;
+        }
+        
+        .toggle-btn.active {
+            background: #90EE90 !important;
+            color: white !important;
+        }
+        
+        .quote-section {
+            background: #F0FFF0 !important;
+        }
+        
+        .quote-icon {
+            color: #90EE90 !important;
+        }
+        
+        .timeline-time {
+            color: #90EE90 !important;
+        }
+        
+        .timeline-icon {
+            background: linear-gradient(135deg, #90EE90 0%, #E6FFE6 100%) !important;
+        }
+        
+        .dress-code-modern {
+            background: #F0FFF0 !important;
+        }
+        
+        .rsvp-modern {
+            background: #F0FFF0 !important;
+        }
+        
+        .section-divider {
+            background: linear-gradient(135deg, #66CDAA 0%, #90EE90 100%) !important;
+        }
+        
+        .ornament i {
+            color: #66CDAA !important;
+        }
+        
+        .ornament .fa-heart {
+            color: #90EE90 !important;
+        }
+        
+        .floating-hearts i {
+            color: #90EE90 !important;
+        }
+        
+        .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 25% 25%, #90EE90 1px, transparent 1px),
+                radial-gradient(circle at 75% 75%, #66CDAA 1px, transparent 1px) !important;
+        }
+        
+        .dress-additional-text {
+            margin-top: 30px;
+            padding: 25px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 15px;
+            text-align: center;
+            border-left: 4px solid #90EE90;
+        }
+        
+        .dress-additional-text p {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1em;
+            color: #2F4F2F;
+            line-height: 1.6;
+            margin: 0;
+            font-style: italic;
+        }
+    </style>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&family=Cormorant+Garamond:wght@300;400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+
+<body>
+    <!-- Фоновые элементы -->
+    <div class="bg-elements">
+        <div class="floating-hearts">
+            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart"></i>
+            <i class="fas fa-heart"></i>
+        </div>
+        <div class="bg-pattern"></div>
+    </div>
+
+    <div class="container">
+        <!-- Hero секция -->
+        <section class="hero">
+            <!-- Фоновые фотографии пары -->
+            <div class="hero-photos">
+                <div class="hero-photo left" id="hero-photo-1">
+                    <img src="" alt="Фото пары" class="hero-img">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-camera"></i>
+                        <span>Фото 1</span>
+                    </div>
+                </div>
+                <div class="hero-photo right" id="hero-photo-2">
+                    <img src="" alt="Фото пары" class="hero-img">
+                    <div class="photo-placeholder">
+                        <i class="fas fa-camera"></i>
+                        <span>Фото 2</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-content">
+                <div class="ornament top-ornament">
+                    <i class="fas fa-leaf"></i>
+                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-leaf"></i>
+                </div>
+
+                <h1 class="main-title">
+                    <span class="couple-names">[Имя] & [Имя]</span>
+                    <span class="wedding-text">приглашают вас</span>
+                </h1>
+
+                <!-- Переключатель между датой и фото -->
+                <div class="hero-display-toggle">
+                    <button class="toggle-btn active" data-mode="date">
+                        <i class="fas fa-calendar"></i>
+                        Дата
+                    </button>
+                    <button class="toggle-btn" data-mode="photo">
+                        <i class="fas fa-image"></i>
+                        Фото
+                    </button>
+                </div>
+
+                <!-- Дата свадьбы -->
+                <div class="wedding-date" id="date-display">
+                    <span class="date-number">[День]</span>
+                    <span class="date-month">[Месяц] [Год]</span>
+                </div>
+
+                <!-- Главное фото пары -->
+                <div class="wedding-photo" id="photo-display" style="display: none;">
+                    <div class="main-couple-photo">
+                        <img src="" alt="Главное фото молодоженов" id="hero-main-photo">
+                        <div class="main-photo-placeholder">
+                            <i class="fas fa-heart"></i>
+                            <span>Главное фото</span>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="invitation-text">
+                    Разделить с нами самый важный<br>
+                    и счастливый день в нашей жизни
+                </p>
+
+                <div class="ornament bottom-ornament">
+                    <i class="fas fa-leaf"></i>
+                    <i class="fas fa-heart"></i>
+                    <i class="fas fa-leaf"></i>
+                </div>
+            </div>
+
+            <div class="scroll-indicator">
+                <i class="fas fa-chevron-down"></i>
+            </div>
+        </section>
+
+        <!-- Цитата -->
+        <section class="quote-section">
+            <div class="quote-content">
+                <i class="fas fa-quote-left quote-icon"></i>
+                <blockquote>
+                    "Любовь не в том, чтобы смотреть друг на друга,<br>
+                    а в том, чтобы вместе смотреть в одном направлении"
+                </blockquote>
+                <cite>— Антуан де Сент-Экзюпери</cite>
+            </div>
+        </section>
+
+        <!-- Программа мероприятия -->
+        <section class="program">
+            <div class="section-header">
+                <h2>Программа торжества</h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <div class="timeline-modern">
+                <div class="timeline-item-modern">
+                    <div class="timeline-icon">
+                        <i class="fas fa-rings-wedding"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">15:00</div>
+                        <h3>Церемония бракосочетания</h3>
+                        <p>ул. [Адрес регистрации]<br>отдел ЗАГС [Район]</p>
+                        <div class="timeline-note">Торжественная регистрация брака</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item-modern">
+                    <div class="timeline-icon">
+                        <i class="fas fa-camera"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">16:30</div>
+                        <h3>Фотосессия</h3>
+                        <p>Парк [Название парка]</p>
+                        <div class="timeline-note">Создаем красивые воспоминания</div>
+                    </div>
+                </div>
+
+                <div class="timeline-item-modern">
+                    <div class="timeline-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">18:00</div>
+                        <h3>Праздничный банкет</h3>
+                        <p>ул. [Адрес банкета]<br>ресторан «[Название ресторана]»</p>
+                        <div class="timeline-note">Ужин, танцы и веселье до утра</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Дресс-код -->
+        <section class="dress-code-modern">
+            <div class="section-header">
+                <h2>Дресс-код</h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <div class="dress-code-content">
+                <div class="dress-code-text">
+                    <p>Мы будем рады видеть вас в нарядах<br>следующих оттенков:</p>
+                </div>
+
+                <div class="color-palette-modern">
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #000000;"></div>
+                        <span>Чёрный</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #FFFFFF; border: 2px solid #ddd;"></div>
+                        <span>Белый</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #F5F5DC;"></div>
+                        <span>Бежевый</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #8B4513;"></div>
+                        <span>Коричневый</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #90EE90;"></div>
+                        <span>Светло-зелёный</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #66CDAA;"></div>
+                        <span>Мятно-зелёный</span>
+                    </div>
+                    <div class="color-item">
+                        <div class="color-circle" style="background: #228B22;"></div>
+                        <span>Лесной зелёный</span>
+                    </div>
+                </div>
+
+                <div class="dress-note">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Формальный стиль одежды приветствуется</span>
+                </div>
+
+                <div class="dress-additional-text">
+                    <p>Для нас самое главное - ваше присутствие. Но мы будем очень признательны, если вы поддержите цветовую гамму спокойных природных оттенков.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Локация -->
+        <section class="location-modern">
+            <div class="section-header">
+                <h2>Место проведения</h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <div class="location-content">
+                <div class="location-info">
+                    <div class="location-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h3>Ресторан «<span data-restaurant-name>[Название ресторана]</span>»</h3>
+                            <p data-restaurant-address>г. [Город], ул. [Адрес]</p>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="location-actions">
+                    <button class="btn-modern primary" onclick="openMap()">
+                        <i class="fas fa-map"></i>
+                        Открыть карту
+                    </button>
+                    <button class="btn-modern secondary" onclick="openNavigator()">
+                        <i class="fas fa-route"></i>
+                        Построить маршрут
+                    </button>
+                </div>
+
+                <div class="location-image">
+                    <img src="restaurant-placeholder.jpg" alt="Ресторан" id="restaurant-img">
+                    <div class="image-overlay">
+                        <i class="fas fa-play-circle" onclick="showVirtualTour()"></i>
+                        <span>Виртуальный тур</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP форма -->
+        <section class="rsvp-modern">
+            <div class="section-header">
+                <h2>Подтверждение присутствия</h2>
+                <div class="section-divider"></div>
+            </div>
+
+            <div class="rsvp-content">
+                <p class="rsvp-description">
+                    Пожалуйста, подтвердите свое присутствие<br>
+                    до <strong>[Дата дедлайна]</strong>
+                </p>
+
+                <form id="rsvp-form-modern" class="rsvp-form">
+                    <div class="form-row">
+                        <div class="form-group-modern">
+                            <label>Ваше имя и фамилия</label>
+                            <input type="text" name="fullName" placeholder="Введите полное имя" required>
+                        </div>
+
+                        <div class="form-group-modern">
+                            <label>Телефон (опционально)</label>
+                            <input type="tel" name="phone" placeholder="+7 (XXX) XXX-XX-XX">
+                        </div>
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label>Подтверждение присутствия</label>
+                        <div class="radio-group-modern">
+                            <label class="radio-modern">
+                                <input type="radio" name="attendance" value="yes" required>
+                                <span class="radio-custom"></span>
+                                <div class="radio-text">
+                                    <strong>Да, буду присутствовать</strong>
+                                    <small>С удовольствием приду на торжество</small>
+                                </div>
+                            </label>
+
+                            <label class="radio-modern">
+                                <input type="radio" name="attendance" value="with-guest" required>
+                                <span class="radio-custom"></span>
+                                <div class="radio-text">
+                                    <strong>Приду с гостем (+1)</strong>
+                                    <small>Буду сопровождаться партнером/семьей</small>
+                                </div>
+                            </label>
+
+                            <label class="radio-modern">
+                                <input type="radio" name="attendance" value="no" required>
+                                <span class="radio-custom"></span>
+                                <div class="radio-text">
+                                    <strong>К сожалению, не смогу прийти</strong>
+                                    <small>Буду с вами мысленно в этот день</small>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group-modern" id="guest-details" style="display: none;">
+                        <label>Имя гостя</label>
+                        <input type="text" name="guestName" placeholder="Имя и фамилия гостя">
+                    </div>
+
+                    <div class="form-group-modern">
+                        <label>Пожелания или комментарии</label>
+                        <textarea name="message"
+                            placeholder="Ваши пожелания молодоженам или особые потребности (диета, аллергии и т.д.)"
+                            rows="3"></textarea>
+                    </div>
+
+                    <button type="submit" class="btn-submit">
+                        <i class="fas fa-paper-plane"></i>
+                        Отправить ответ
+                    </button>
+                </form>
+
+                <div class="telegram-info">
+                    <i class="fab fa-telegram"></i>
+                    <p>Ответ будет отправлен через Telegram бота<br>и молодожены получат уведомление</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Футер -->
+        <footer class="footer">
+            <div class="footer-content">
+                <div class="couple-photo-modern">
+                    <img src="couple-placeholder.jpg" alt="Молодожены" id="couple-img">
+                </div>
+
+                <div class="footer-text">
+                    <h3>С любовью,</h3>
+                    <p class="couple-signature">[Имя] и [Имя]</p>
+                </div>
+
+                <div class="contact-info">
+                    <p>По всем вопросам:</p>
+                    <a href="tel:+7XXXXXXXXXX">+7 (XXX) XXX-XX-XX</a>
+                    <a href="https://t.me/username">@telegram_username</a>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 Свадебное приглашение</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Модальное окно успеха -->
+    <div id="success-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3>Спасибо за ответ!</h3>
+            <p>Ваше подтверждение отправлено молодоженам через Telegram бота</p>
+            <button class="btn-modern primary" onclick="closeModal()">Закрыть</button>
+        </div>
+    </div>
+
+    <!-- Модальное окно виртуального тура -->
+    <div id="virtual-tour-modal" class="virtual-tour-modal">
+        <div class="virtual-tour-content">
+            <div class="virtual-tour-header">
+                <h3>Виртуальный тур по ресторану</h3>
+                <button class="close-tour" onclick="closeVirtualTour()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="tour-content">
+                <iframe id="tour-iframe" class="virtual-tour-iframe" src="" style="display: none;"></iframe>
+                <div class="tour-placeholder" id="tour-placeholder">
+                    <i class="fas fa-street-view"></i>
+                    <h4>Виртуальный тур</h4>
+                    <p>Здесь будет размещен виртуальный тур по ресторану.<br>
+                    Пока что вы можете посмотреть фотографии<br>
+                    или посетить ресторан лично.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
