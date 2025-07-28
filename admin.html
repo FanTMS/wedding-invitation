@@ -488,12 +488,17 @@
         // Загрузка изображения
         async function uploadImage(type) {
             const file = selectedFiles[type];
-            if (!file) return;
+            if (!file) {
+                alert('Сначала выберите файл для загрузки!');
+                return;
+            }
 
             const uploadBtn = document.getElementById(type + '-upload');
             const progressBar = document.getElementById(type + '-progress');
             const progressFill = progressBar.querySelector('.progress-fill');
             const statusDiv = document.getElementById(type + '-status');
+
+            console.log(`🔄 Начинаем загрузку ${type}:`, file.name);
 
             // Показываем прогресс
             uploadBtn.disabled = true;
@@ -507,13 +512,18 @@
                 formData.append('image', file);
                 formData.append('type', type);
 
+                console.log(`📤 Отправляем файл на сервер...`);
+
                 // Загружаем файл
                 const response = await fetch('/api/upload-image', {
                     method: 'POST',
                     body: formData
                 });
 
+                console.log(`📥 Получен ответ:`, response.status);
+
                 const result = await response.json();
+                console.log(`📋 Результат:`, result);
 
                 if (response.ok && result.success) {
                     // Успешная загрузка
@@ -536,16 +546,19 @@
                         delete selectedFiles[type];
                         document.getElementById(type + '-preview').style.display = 'none';
                         document.getElementById(type + '-input').value = '';
+                        
+                        console.log(`✅ Загрузка ${type} завершена успешно`);
                     }, 500);
                 } else {
                     throw new Error(result.error || 'Ошибка загрузки');
                 }
             } catch (error) {
-                console.error('Ошибка загрузки:', error);
+                console.error('❌ Ошибка загрузки:', error);
                 statusDiv.className = 'status-message status-error';
                 statusDiv.innerHTML = `
                     <i class="fas fa-exclamation-triangle"></i> 
-                    Ошибка загрузки: ${error.message}
+                    Ошибка загрузки: ${error.message}<br>
+                    <small>Проверьте консоль для подробностей</small>
                 `;
                 statusDiv.style.display = 'block';
                 progressBar.style.display = 'none';

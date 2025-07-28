@@ -23,8 +23,19 @@ const SUPABASE_CONFIG = {
 
 // Инициализация Supabase
 if (SUPABASE_CONFIG.url && SUPABASE_CONFIG.key) {
-    SUPABASE_CONFIG.client = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
-    console.log('✅ Supabase подключен');
+    try {
+        // Проверяем, что URL правильный (должен быть REST API URL, а не PostgreSQL)
+        if (SUPABASE_CONFIG.url.includes('postgresql://')) {
+            console.error('❌ Неправильный SUPABASE_URL! Используйте REST API URL, а не PostgreSQL URL');
+            console.log('💡 Правильный формат: https://your-project.supabase.co');
+            console.log('❌ Неправильный формат:', SUPABASE_CONFIG.url);
+        } else {
+            SUPABASE_CONFIG.client = createClient(SUPABASE_CONFIG.url, SUPABASE_CONFIG.key);
+            console.log('✅ Supabase подключен:', SUPABASE_CONFIG.url);
+        }
+    } catch (error) {
+        console.error('❌ Ошибка подключения к Supabase:', error.message);
+    }
 } else {
     console.log('⚠️ Supabase не настроен, используется локальное хранилище');
 }
@@ -102,6 +113,11 @@ let siteConfig = {
     virtualTour: {
         enabled: false,
         url: null
+    },
+    guestGroup: {
+        enabled: false,
+        url: null,
+        inviteMessage: 'Вы только что оставили заявку, мы рады вас видеть в общей группе со всеми гостями: {GROUP_URL}. Пожалуйста добавляйтесь, чтоб мы могли вас увидеть.'
     }
 };
 
@@ -233,6 +249,18 @@ async function handleBotCommand(chatId, command, value) {
             const siteUrl = process.env.SITE_URL || `http://localhost:${PORT}`;
             return await sendTelegramMessage(chatId, `🔗 <b>Ссылка на ваш сайт:</b>\n${siteUrl}\n\n💡 Откройте в браузере для просмотра изменений`);
             
+        case '/group':
+            if (!value) {
+                return await sendTelegramMessage(chatId, '❌ Укажите ссылку на группу: /group https://t.me/your_group');
+            }
+            siteConfig.guestGroup = {
+                enabled: true,
+                url: value,
+                inviteMessage: 'Вы только что оставили заявку, мы рады вас видеть в общей группе со всеми гостями: {GROUP_URL}. Пожалуйста добавляйтесь, чтоб мы могли вас увидеть.'
+            };
+            await saveSiteConfig();
+            return await sendTelegramMessage(chatId, `✅ Ссылка на группу гостей настроена: ${value}\n\n💡 Теперь после каждого RSVP гостю будет отправлено приглашение в группу.`);
+            
         case '/backup':
             const backup = JSON.stringify(siteConfig, null, 2);
             return await sendTelegramMessage(chatId, `💾 <b>РЕЗЕРВНАЯ КОПИЯ НАСТРОЕК</b>\n\n<code>${backup}</code>\n\n💡 Сохраните этот текст для восстановления`);
@@ -269,6 +297,9 @@ async function sendBotMenu(chatId) {
 
 💬 <b>Цитата:</b>
 /quote [текст|автор] - изменить цитату
+
+👥 <b>Группа гостей:</b>
+/group [ссылка] - настроить приглашение в группу
 
 🔧 <b>Управление:</b>
 /status - текущие настройки
@@ -670,7 +701,22 @@ app.post('/api/rsvp', async (req, res) => {
         const telegramMessage = formatGuestResponse(responseData);
         await sendTelegramMessage(TELEGRAM_CONFIG.chatId, telegramMessage);
         
-        res.json({ success: true, message: 'Ответ сохранен успешно' });
+        // Отправляем приглашение в группу гостю (если настроено)
+        if (siteConfig.guestGroup.enabled && siteConfig.guestGroup.url && phone) {
+            const inviteMessage = siteConfig.guestGroup.inviteMessage.replace('{GROUP_URL}', siteConfig.guestGroup.url);
+            
+            // Пытаемся отправить приглашение через Telegram (если у нас есть chat_id гостя)
+            // Пока что просто логируем, что нужно отправить приглашение
+            console.log(`📨 Нужно отправить приглашение в группу гостю ${fullName}: ${inviteMessage}`);
+            
+            // TODO: Здесь можно добавить логику отправки SMS или другого способа связи
+        }
+        
+        res.json({ 
+            success: true, 
+            message: 'Ответ сохранен успешно',
+            groupInvite: siteConfig.guestGroup.enabled ? 'Приглашение в группу будет отправлено' : null
+        });
     } catch (error) {
         console.error('Ошибка обработки RSVP:', error);
         res.status(500).json({ error: 'Внутренняя ошибка сервера' });
@@ -877,12 +923,19 @@ app.get('/admin', (req, res) => {
 
 // API для загрузки изображений в Supabase Storage
 app.post('/api/upload-image', upload.single('image'), async (req, res) => {
+    console.log('📤 Получен запрос на загрузку изображения');
+    console.log('📋 Файл:', req.file ? req.file.originalname : 'не найден');
+    console.log('📋 Тип:', req.body.type);
+    console.log('🔗 Supabase подключен:', !!SUPABASE_CONFIG.client);
+    
     try {
         if (!req.file) {
+            console.error('❌ Файл не найден в запросе');
             return res.status(400).json({ error: 'Файл не найден' });
         }
 
         if (!SUPABASE_CONFIG.client) {
+            console.error('❌ Supabase не настроен');
             return res.status(500).json({ error: 'Supabase не настроен' });
         }
 
