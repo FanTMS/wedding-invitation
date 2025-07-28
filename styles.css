@@ -847,43 +847,7 @@ body.loading .bg-elements {
     z-index: 1;
 }
 
-/* Переключатель между датой и фото */
-.hero-display-toggle {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin: 30px 0;
-}
 
-.toggle-btn {
-    padding: 10px 20px;
-    border: 2px solid var(--primary-color);
-    background: transparent;
-    color: var(--primary-color);
-    border-radius: 25px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 0.9em;
-    font-weight: 500;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    user-select: none;
-    min-height: 44px;
-}
-
-.toggle-btn:hover {
-    background: var(--primary-color);
-    color: var(--white);
-}
-
-.toggle-btn.active {
-    background: var(--primary-color);
-    color: var(--white);
-    box-shadow: var(--shadow-light);
-}
 
 /* Главное фото пары */
 .wedding-photo {
@@ -2513,16 +2477,16 @@ cite {
         width: 350px;
         height: 450px;
     }
-    
+
     .overlay-date-number {
         font-size: 3em;
     }
-    
+
     .overlay-date-month {
         font-size: 1.1em;
         letter-spacing: 1.5px;
     }
-    
+
     .photo-date-overlay {
         padding: 25px 15px 20px;
     }
@@ -2582,17 +2546,7 @@ cite {
         font-size: 1.5em;
     }
 
-    .hero-display-toggle {
-        margin: 25px 0;
-        gap: 8px;
-    }
 
-    .toggle-btn {
-        padding: 10px 16px;
-        font-size: 0.85em;
-        gap: 6px;
-        border-radius: 20px;
-    }
 
     .wedding-date {
         margin: 30px 0;
@@ -2615,20 +2569,20 @@ cite {
         height: 420px;
         border-radius: 20px;
     }
-    
+
     .overlay-date-number {
         font-size: 2.8em;
     }
-    
+
     .overlay-date-month {
         font-size: 1em;
         letter-spacing: 1px;
     }
-    
+
     .photo-date-overlay {
         padding: 20px 15px 18px;
     }
-    
+
     .overlay-decorative-line {
         width: 50px;
         margin: 12px auto 8px;
@@ -2741,46 +2695,54 @@ cite {
     }
 
     .color-palette-modern {
-        gap: 18px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
         justify-content: center;
         max-width: 100%;
-        flex-wrap: wrap;
-        padding: 10px 0;
+        padding: 15px 10px;
+        margin: 0 auto;
     }
 
     .color-item {
-        flex: 0 0 auto;
-        min-width: 75px;
-        padding: 8px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.5);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 12px 8px;
+        border-radius: 15px;
+        background: rgba(255, 255, 255, 0.6);
         transition: all 0.3s ease;
+        min-height: 100px;
+        justify-content: center;
     }
 
     .color-item:hover {
-        background: rgba(255, 255, 255, 0.8);
-        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
-        width: 50px;
-        height: 50px;
-        margin: 0 auto 10px;
+        width: 48px;
+        height: 48px;
+        margin: 0 auto 8px;
         border-width: 2px;
-        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
+        box-shadow: 0 2px 8px rgba(144, 238, 144, 0.15);
+        flex-shrink: 0;
     }
 
     .color-circle:hover {
         transform: scale(1.05);
-        box-shadow: 0 5px 15px rgba(144, 238, 144, 0.3);
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.25);
     }
 
     .color-item span {
-        font-size: 0.85em;
-        line-height: 1.2;
-        display: block;
+        font-size: 0.8em;
+        line-height: 1.1;
         text-align: center;
         font-weight: 500;
+        color: var(--text-dark);
+        margin-top: auto;
     }
 
     .dress-note {
@@ -3079,20 +3041,20 @@ cite {
         height: 380px;
         border-radius: 18px;
     }
-    
+
     .overlay-date-number {
         font-size: 2.5em;
     }
-    
+
     .overlay-date-month {
         font-size: 0.95em;
         letter-spacing: 1px;
     }
-    
+
     .photo-date-overlay {
         padding: 18px 12px 15px;
     }
-    
+
     .overlay-decorative-line {
         width: 45px;
         margin: 10px auto 6px;
@@ -3192,30 +3154,39 @@ cite {
     }
 
     .color-palette-modern {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
         gap: 15px;
         padding: 15px 5px;
+        margin: 0 auto;
+        max-width: 280px;
     }
 
     .color-item {
-        min-width: 65px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         padding: 10px 6px;
-        border-radius: 10px;
-        background: rgba(255, 255, 255, 0.6);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.7);
         box-shadow: 0 2px 8px rgba(144, 238, 144, 0.1);
+        min-height: 85px;
+        justify-content: center;
     }
 
     .color-item:hover {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.95);
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
-        width: 42px;
-        height: 42px;
-        margin: 0 auto 8px;
+        width: 40px;
+        height: 40px;
+        margin: 0 auto 6px;
         border-width: 2px;
         box-shadow: 0 2px 8px rgba(144, 238, 144, 0.15);
+        flex-shrink: 0;
     }
 
     .color-circle:hover {
@@ -3224,9 +3195,12 @@ cite {
     }
 
     .color-item span {
-        font-size: 0.78em;
-        line-height: 1.1;
+        font-size: 0.75em;
+        line-height: 1.0;
+        text-align: center;
         font-weight: 500;
+        color: var(--text-dark);
+        margin-top: auto;
     }
 
     .dress-note {
@@ -3556,16 +3530,24 @@ cite {
     }
 
     .color-palette-modern {
-        gap: 12px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
         padding: 12px 5px;
+        margin: 0 auto;
+        max-width: 250px;
     }
 
     .color-item {
-        min-width: 60px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
         padding: 8px 4px;
-        border-radius: 8px;
-        background: rgba(255, 255, 255, 0.7);
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.8);
         box-shadow: 0 1px 6px rgba(144, 238, 144, 0.1);
+        min-height: 75px;
+        justify-content: center;
     }
 
     .color-item:hover {
@@ -3575,11 +3557,12 @@ cite {
     }
 
     .color-circle {
-        width: 36px;
-        height: 36px;
-        margin: 0 auto 6px;
+        width: 34px;
+        height: 34px;
+        margin: 0 auto 5px;
         border-width: 2px;
         box-shadow: 0 1px 6px rgba(144, 238, 144, 0.12);
+        flex-shrink: 0;
     }
 
     .color-circle:hover {
@@ -3588,9 +3571,12 @@ cite {
     }
 
     .color-item span {
-        font-size: 0.72em;
-        line-height: 1.0;
+        font-size: 0.7em;
+        line-height: 0.9;
+        text-align: center;
         font-weight: 500;
+        color: var(--text-dark);
+        margin-top: auto;
     }
 
     .location-image img {

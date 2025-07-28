@@ -10,7 +10,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="theme-color" content="#90EE90">
     <title>Свадебное приглашение</title>
-    <link rel="stylesheet" href="styles.css?v=6">
+    <link rel="stylesheet" href="styles.css?v=8">
     <style>
         /* Принудительные зеленые стили для критических элементов */
         :root {
@@ -217,26 +217,8 @@
                     <span class="wedding-text">приглашают вас</span>
                 </h1>
 
-                <!-- Переключатель между датой и фото -->
-                <div class="hero-display-toggle">
-                    <button class="toggle-btn" data-mode="date">
-                        <i class="fas fa-calendar"></i>
-                        Дата
-                    </button>
-                    <button class="toggle-btn active" data-mode="photo">
-                        <i class="fas fa-image"></i>
-                        Фото
-                    </button>
-                </div>
-
-                <!-- Дата свадьбы -->
-                <div class="wedding-date" id="date-display" style="display: none;">
-                    <span class="date-number">[День]</span>
-                    <span class="date-month">[Месяц] [Год]</span>
-                </div>
-
-                <!-- Главное фото пары -->
-                <div class="wedding-photo" id="photo-display">
+                <!-- Главное фото пары с датой -->
+                <div class="wedding-photo">
                     <div class="main-couple-photo">
                         <img src="" alt="Главное фото молодоженов" id="hero-main-photo">
                         <div class="main-photo-placeholder">
@@ -602,7 +584,7 @@
         </div>
     </div>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=8"></script>
 </body>
 
 </html>

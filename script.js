@@ -46,6 +46,9 @@ async function loadConfigFromServer() {
 
 // Обновление отображения сайта
 function updateSiteDisplay() {
+    console.log('🔄 Обновляем отображение сайта...');
+    console.log('📸 Изображения в конфиге:', SITE_CONFIG.images);
+    
     // Обновляем имена
     document.querySelectorAll('.couple-names, .couple-signature').forEach(el => {
         el.textContent = SITE_CONFIG.coupleNames;
@@ -135,28 +138,14 @@ function updateOtherImages() {
     }
 }
 
-// Инициализация переключателя даты/фото
-function initHeroToggle() {
-    const toggleButtons = document.querySelectorAll('.toggle-btn');
-    const dateDisplay = document.getElementById('date-display');
-    const photoDisplay = document.getElementById('photo-display');
-    
-    toggleButtons.forEach(button => {
-        button.addEventListener('click', function() {
-            const mode = this.dataset.mode;
-            
-            toggleButtons.forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            if (mode === 'date') {
-                dateDisplay.style.display = 'block';
-                photoDisplay.style.display = 'none';
-            } else {
-                dateDisplay.style.display = 'none';
-                photoDisplay.style.display = 'block';
-            }
-        });
-    });
+// Инициализация hero секции (теперь только фото с датой)
+function initHeroDisplay() {
+    // Убеждаемся, что фото отображается
+    const photoDisplay = document.querySelector('.wedding-photo');
+    if (photoDisplay) {
+        photoDisplay.style.display = 'block';
+        console.log('✅ Hero фото инициализировано');
+    }
 }
 
 // Виртуальный тур
@@ -524,38 +513,7 @@ async function simulateLoading() {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🎉 Инициализация свадебного сайта v5.0...');
-    console.log('📱 Проверка отображения по умолчанию...');
-    
-    // Проверяем, что фото отображается по умолчанию
-    const photoDisplay = document.getElementById('photo-display');
-    const dateDisplay = document.getElementById('date-display');
-    const overlayElements = document.querySelectorAll('.photo-date-overlay');
-    
-    console.log('📸 Фото отображение:', photoDisplay ? photoDisplay.style.display : 'не найдено');
-    console.log('📅 Дата отображение:', dateDisplay ? dateDisplay.style.display : 'не найдено');
-    console.log('🎭 Оверлей элементов найдено:', overlayElements.length);
-    
-    // Принудительно устанавливаем правильное отображение
-    if (photoDisplay && dateDisplay) {
-        photoDisplay.style.display = 'block';
-        dateDisplay.style.display = 'none';
-        
-        // Также обновляем кнопки
-        const photoBtn = document.querySelector('[data-mode="photo"]');
-        const dateBtn = document.querySelector('[data-mode="date"]');
-        
-        if (photoBtn && dateBtn) {
-            photoBtn.classList.add('active');
-            dateBtn.classList.remove('active');
-        }
-        
-        console.log('✅ Принудительно установлено отображение фото');
-    }
-    
-    // Проверяем активные кнопки
-    const activeButton = document.querySelector('.toggle-btn.active');
-    console.log('🔘 Активная кнопка:', activeButton ? activeButton.dataset.mode : 'не найдена');
+    console.log('🎉 Инициализация свадебного сайта v8.0...');
     
     // Запускаем симуляцию загрузки параллельно с реальной инициализацией
     const loadingSimulation = simulateLoading();
@@ -566,7 +524,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await loadConfigFromServer();
         
         // Инициализируем компоненты
-        initHeroToggle();
+        initHeroDisplay();
         initRSVPForm();
         initScrollAnimations();
         initSmoothScroll();

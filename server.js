@@ -122,6 +122,9 @@ async function handleBotCommand(chatId, command, value) {
         case '/menu':
             return await sendBotMenu(chatId);
             
+        case '/test':
+            return await sendTelegramMessage(chatId, '🤖 Бот работает! Система готова к загрузке фотографий.');
+            
         case '/help':
             return await sendBotHelp(chatId);
             
@@ -357,6 +360,8 @@ async function handlePhotoUpload(chatId, photos, caption) {
             const filePath = fileData.result.file_path;
             const fileName = filePath.split('/').pop();
             
+            console.log(`📸 Загружаем фото ${photoType}:`, imageUrl);
+            
             // Маппинг типов фотографий
             const photoMapping = {
                 'couple': 'couple',
@@ -368,6 +373,8 @@ async function handlePhotoUpload(chatId, photos, caption) {
             
             // Обновляем конфигурацию
             siteConfig.images[photoMapping[photoType]] = imageUrl;
+            
+            console.log(`📸 Конфигурация обновлена:`, siteConfig.images);
             
             // Сохраняем изображение в базу данных
             await saveImageToDatabase(
@@ -390,7 +397,7 @@ async function handlePhotoUpload(chatId, photos, caption) {
                 'heromain': 'главное фото'
             };
             
-            return await sendTelegramMessage(chatId, `✅ Фото ${photoNames[photoType]} обновлено и сохранено в базу данных!`);
+            return await sendTelegramMessage(chatId, `✅ Фото ${photoNames[photoType]} обновлено и сохранено!\n\n🔗 URL: ${imageUrl}\n\n💡 Обновите сайт, чтобы увидеть изменения.`);
         }
     } catch (error) {
         console.error('Ошибка загрузки фото:', error);
