@@ -57,30 +57,11 @@ app.use(express.static(path.join(__dirname), {
     etag: true
 }));
 
-// Хранилище конфигурации сайта
+// Хранилище конфигурации сайта (будет загружаться из БД)
 let siteConfig = {
     coupleNames: 'Имя & Имя',
     weddingDate: '2025-08-15',
-    timeline: [
-        {
-            time: '15:00',
-            title: 'Церемония бракосочетания',
-            description: 'ул. [Адрес регистрации]<br>отдел ЗАГС [Район]',
-            note: 'Торжественная регистрация брака'
-        },
-        {
-            time: '16:30',
-            title: 'Фотосессия',
-            description: 'Парк [Название парка]',
-            note: 'Создаем красивые воспоминания'
-        },
-        {
-            time: '18:00',
-            title: 'Праздничный банкет',
-            description: 'ул. [Адрес банкета]<br>ресторан «[Название ресторана]»',
-            note: 'Ужин, танцы и веселье до утра'
-        }
-    ],
+    timeline: [],
     restaurant: {
         name: 'Название ресторана',
         address: 'г. Город, ул. Адрес',
@@ -373,6 +354,8 @@ async function handlePhotoUpload(chatId, photos, caption) {
         
         if (fileData.ok) {
             const imageUrl = `https://api.telegram.org/file/bot${TELEGRAM_CONFIG.botToken}/${fileData.result.file_path}`;
+            const filePath = fileData.result.file_path;
+            const fileName = filePath.split('/').pop();
             
             // Маппинг типов фотографий
             const photoMapping = {
@@ -383,7 +366,20 @@ async function handlePhotoUpload(chatId, photos, caption) {
                 'heromain': 'heroMainPhoto'
             };
             
+            // Обновляем конфигурацию
             siteConfig.images[photoMapping[photoType]] = imageUrl;
+            
+            // Сохраняем изображение в базу данных
+            await saveImageToDatabase(
+                photoType,
+                imageUrl,
+                fileName,
+                largestPhoto.file_size || null,
+                'image/jpeg', // Telegram обычно отправляет JPEG
+                largestPhoto.file_id
+            );
+            
+            // Сохраняем общую конфигурацию
             await saveSiteConfig();
             
             const photoNames = {
@@ -394,7 +390,7 @@ async function handlePhotoUpload(chatId, photos, caption) {
                 'heromain': 'главное фото'
             };
             
-            return await sendTelegramMessage(chatId, `✅ Фото ${photoNames[photoType]} обновлено!`);
+            return await sendTelegramMessage(chatId, `✅ Фото ${photoNames[photoType]} обновлено и сохранено в базу данных!`);
         }
     } catch (error) {
         console.error('Ошибка загрузки фото:', error);
@@ -402,42 +398,153 @@ async function handlePhotoUpload(chatId, photos, caption) {
     }
 }
 
-// Сохранение конфигурации
+// Сохранение конфигурации в базу данных
 async function saveSiteConfig() {
-    if (SUPABASE_CONFIG.client) {
-        try {
-            const { error } = await SUPABASE_CONFIG.client
-                .from('site_config')
-                .upsert([{
-                    id: 1,
-                    config: siteConfig,
-                    updated_at: new Date().toISOString()
-                }]);
-            
-            if (error) throw error;
-            console.log('✅ Конфигурация сохранена в Supabase');
-        } catch (error) {
-            console.error('❌ Ошибка сохранения в Supabase:', error);
-        }
+    if (!SUPABASE_CONFIG.client) {
+        console.log('⚠️ Supabase не настроен, конфигурация не сохранена');
+        return;
+    }
+
+    try {
+        // Сохраняем основную конфигурацию
+        const { error: configError } = await SUPABASE_CONFIG.client
+            .from('site_config')
+            .upsert([{
+                id: 1,
+                couple_names: siteConfig.coupleNames,
+                wedding_date: siteConfig.weddingDate,
+                restaurant_name: siteConfig.restaurant.name,
+                restaurant_address: siteConfig.restaurant.address,
+                restaurant_phone: siteConfig.restaurant.phone,
+                deadline: siteConfig.deadline,
+                contact_phone: siteConfig.contact.phone,
+                contact_telegram: siteConfig.contact.telegram,
+                quote_text: siteConfig.quote.text,
+                quote_author: siteConfig.quote.author,
+                virtual_tour_enabled: siteConfig.virtualTour.enabled,
+                virtual_tour_url: siteConfig.virtualTour.url,
+                updated_at: new Date().toISOString()
+            }]);
+
+        if (configError) throw configError;
+        console.log('✅ Конфигурация сохранена в Supabase');
+    } catch (error) {
+        console.error('❌ Ошибка сохранения конфигурации:', error);
     }
 }
 
-// Загрузка конфигурации при старте
+// Сохранение изображения в базу данных
+async function saveImageToDatabase(imageType, imageUrl, fileName, fileSize, mimeType, telegramFileId) {
+    if (!SUPABASE_CONFIG.client) return;
+
+    try {
+        // Деактивируем старые изображения этого типа
+        await SUPABASE_CONFIG.client
+            .from('site_images')
+            .update({ is_active: false })
+            .eq('image_type', imageType);
+
+        // Добавляем новое изображение
+        const { error } = await SUPABASE_CONFIG.client
+            .from('site_images')
+            .insert([{
+                image_type: imageType,
+                image_url: imageUrl,
+                file_name: fileName,
+                file_size: fileSize,
+                mime_type: mimeType,
+                telegram_file_id: telegramFileId,
+                is_active: true
+            }]);
+
+        if (error) throw error;
+        console.log(`✅ Изображение ${imageType} сохранено в базу данных`);
+    } catch (error) {
+        console.error(`❌ Ошибка сохранения изображения ${imageType}:`, error);
+    }
+}
+
+// Загрузка конфигурации из базы данных
 async function loadSiteConfig() {
-    if (SUPABASE_CONFIG.client) {
-        try {
-            const { data, error } = await SUPABASE_CONFIG.client
-                .from('site_config')
-                .select('*')
-                .single();
-            
-            if (data && data.config) {
-                siteConfig = { ...siteConfig, ...data.config };
-                console.log('✅ Конфигурация загружена из Supabase');
-            }
-        } catch (error) {
-            console.log('⚠️ Конфигурация не найдена в Supabase, используется по умолчанию');
+    if (!SUPABASE_CONFIG.client) {
+        console.log('⚠️ Supabase не настроен, используется локальная конфигурация');
+        return;
+    }
+
+    try {
+        // Загружаем основную конфигурацию
+        const { data: configData, error: configError } = await SUPABASE_CONFIG.client
+            .from('site_config')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (configError && configError.code !== 'PGRST116') {
+            throw configError;
         }
+
+        if (configData) {
+            siteConfig.coupleNames = configData.couple_names || siteConfig.coupleNames;
+            siteConfig.weddingDate = configData.wedding_date || siteConfig.weddingDate;
+            siteConfig.restaurant.name = configData.restaurant_name || siteConfig.restaurant.name;
+            siteConfig.restaurant.address = configData.restaurant_address || siteConfig.restaurant.address;
+            siteConfig.restaurant.phone = configData.restaurant_phone || siteConfig.restaurant.phone;
+            siteConfig.deadline = configData.deadline || siteConfig.deadline;
+            siteConfig.contact.phone = configData.contact_phone || siteConfig.contact.phone;
+            siteConfig.contact.telegram = configData.contact_telegram || siteConfig.contact.telegram;
+            siteConfig.quote.text = configData.quote_text || siteConfig.quote.text;
+            siteConfig.quote.author = configData.quote_author || siteConfig.quote.author;
+            siteConfig.virtualTour.enabled = configData.virtual_tour_enabled || false;
+            siteConfig.virtualTour.url = configData.virtual_tour_url || null;
+        }
+
+        // Загружаем изображения
+        const { data: imagesData, error: imagesError } = await SUPABASE_CONFIG.client
+            .from('site_images')
+            .select('*')
+            .eq('is_active', true);
+
+        if (imagesError) throw imagesError;
+
+        if (imagesData && imagesData.length > 0) {
+            const imageMapping = {
+                'couple': 'couple',
+                'restaurant': 'restaurant',
+                'hero1': 'heroPhoto1',
+                'hero2': 'heroPhoto2',
+                'heromain': 'heroMainPhoto'
+            };
+
+            imagesData.forEach(img => {
+                if (imageMapping[img.image_type]) {
+                    siteConfig.images[imageMapping[img.image_type]] = img.image_url;
+                }
+            });
+        }
+
+        // Загружаем программу торжества
+        const { data: timelineData, error: timelineError } = await SUPABASE_CONFIG.client
+            .from('wedding_timeline')
+            .select('*')
+            .eq('is_active', true)
+            .order('order_index');
+
+        if (timelineError) throw timelineError;
+
+        if (timelineData && timelineData.length > 0) {
+            siteConfig.timeline = timelineData.map(item => ({
+                time: item.time_slot,
+                title: item.title,
+                description: item.description,
+                note: item.note,
+                icon: item.icon
+            }));
+        }
+
+        console.log('✅ Конфигурация загружена из Supabase');
+    } catch (error) {
+        console.error('❌ Ошибка загрузки конфигурации:', error);
+        console.log('⚠️ Используется локальная конфигурация по умолчанию');
     }
 }
 
@@ -489,7 +596,18 @@ app.post('/webhook/telegram', async (req, res) => {
 
 // API маршрут для получения конфигурации сайта
 app.get('/api/config', (req, res) => {
+    console.log('📡 Запрос конфигурации:', siteConfig);
     res.json(siteConfig);
+});
+
+// Тестовый маршрут для проверки обновлений
+app.get('/api/test', (req, res) => {
+    res.json({
+        message: 'Сервер обновлен!',
+        timestamp: new Date().toISOString(),
+        supabaseConnected: !!SUPABASE_CONFIG.client,
+        config: siteConfig
+    });
 });
 
 // API маршрут для сохранения ответа гостя
@@ -508,6 +626,8 @@ app.post('/api/rsvp', async (req, res) => {
             attendance: attendance,
             guest_name: guestName || null,
             message: message || null,
+            ip_address: req.ip || req.connection.remoteAddress,
+            user_agent: req.get('User-Agent'),
             created_at: new Date().toISOString()
         };
         
@@ -538,7 +658,7 @@ app.post('/api/rsvp', async (req, res) => {
 app.get('/api/responses', async (req, res) => {
     try {
         if (!SUPABASE_CONFIG.client) {
-            return res.json({ total: 0, responses: [] });
+            return res.json({ total: 0, responses: [], stats: { coming: 0, withGuest: 0, notComing: 0, totalGuests: 0 } });
         }
         
         const { data, error } = await SUPABASE_CONFIG.client
@@ -548,18 +668,78 @@ app.get('/api/responses', async (req, res) => {
         
         if (error) throw error;
         
+        const stats = {
+            coming: data.filter(r => r.attendance === 'yes').length,
+            withGuest: data.filter(r => r.attendance === 'with-guest').length,
+            notComing: data.filter(r => r.attendance === 'no').length
+        };
+        
+        stats.totalGuests = stats.coming + (stats.withGuest * 2);
+        
         res.json({
             total: data.length,
             responses: data,
-            stats: {
-                coming: data.filter(r => r.attendance === 'yes').length,
-                withGuest: data.filter(r => r.attendance === 'with-guest').length,
-                notComing: data.filter(r => r.attendance === 'no').length
-            }
+            stats: stats
         });
     } catch (error) {
         console.error('Ошибка получения ответов:', error);
         res.status(500).json({ error: 'Ошибка получения данных' });
+    }
+});
+
+// API маршрут для получения изображений
+app.get('/api/images', async (req, res) => {
+    try {
+        if (!SUPABASE_CONFIG.client) {
+            return res.json({ images: [] });
+        }
+        
+        const { data, error } = await SUPABASE_CONFIG.client
+            .from('site_images')
+            .select('*')
+            .eq('is_active', true)
+            .order('uploaded_at', { ascending: false });
+        
+        if (error) throw error;
+        
+        res.json({ images: data });
+    } catch (error) {
+        console.error('Ошибка получения изображений:', error);
+        res.status(500).json({ error: 'Ошибка получения изображений' });
+    }
+});
+
+// API маршрут для получения полной конфигурации (включая статистику)
+app.get('/api/full-config', async (req, res) => {
+    try {
+        if (!SUPABASE_CONFIG.client) {
+            return res.json(siteConfig);
+        }
+        
+        // Используем представление для получения полной конфигурации
+        const { data, error } = await SUPABASE_CONFIG.client
+            .from('site_full_config')
+            .select('*')
+            .single();
+        
+        if (error && error.code !== 'PGRST116') {
+            throw error;
+        }
+        
+        // Получаем статистику ответов
+        const { data: statsData, error: statsError } = await SUPABASE_CONFIG.client
+            .rpc('get_rsvp_stats');
+        
+        const fullConfig = {
+            ...siteConfig,
+            database: data || null,
+            rsvpStats: statsData || { total: 0, coming: 0, with_guest: 0, not_coming: 0, total_guests: 0 }
+        };
+        
+        res.json(fullConfig);
+    } catch (error) {
+        console.error('Ошибка получения полной конфигурации:', error);
+        res.json(siteConfig);
     }
 });
 
@@ -644,6 +824,11 @@ app.get('/health', (req, res) => {
 // Главная страница
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+// Диагностическая страница
+app.get('/debug', (req, res) => {
+    res.sendFile(path.join(__dirname, 'debug.html'));
 });
 
 // Обработка всех остальных маршрутов (SPA fallback)

@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Диагностика - Свадебный сайт</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        .debug-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status-ok { color: #28a745; }
+        .status-error { color: #dc3545; }
+        .status-warning { color: #ffc107; }
+        pre {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .test-button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Диагностика свадебного сайта</h1>
+    
+    <div class="debug-section">
+        <h2>📊 Статус системы</h2>
+        <div id="system-status">Проверяем...</div>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🗄️ База данных</h2>
+        <div id="database-status">Проверяем подключение...</div>
+        <button class="test-button" onclick="testDatabase()">Тест БД</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🤖 Telegram бот</h2>
+        <div id="telegram-status">Проверяем...</div>
+        <button class="test-button" onclick="testTelegram()">Тест бота</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>⚙️ Конфигурация</h2>
+        <div id="config-status">Загружаем...</div>
+        <button class="test-button" onclick="loadConfig()">Обновить конфиг</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>📸 Изображения</h2>
+        <div id="images-status">Проверяем...</div>
+        <button class="test-button" onclick="testImages()">Тест изображений</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>📝 RSVP ответы</h2>
+        <div id="rsvp-status">Загружаем...</div>
+        <button class="test-button" onclick="testRSVP()">Тест RSVP</button>
+    </div>
+    
+    <div class="debug-section">
+        <h2>🔗 Полезные ссылки</h2>
+        <a href="/" class="test-button">Главная страница</a>
+        <a href="/api/test" class="test-button" target="_blank">API тест</a>
+        <a href="/api/config" class="test-button" target="_blank">Конфигурация</a>
+        <a href="/api/responses" class="test-button" target="_blank">Ответы гостей</a>
+    </div>
+
+    <script>
+        // Проверка системы при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSystemStatus();
+            loadConfig();
+            testDatabase();
+            testTelegram();
+            testImages();
+            testRSVP();
+        });
+
+        async function checkSystemStatus() {
+            try {
+                const response = await fetch('/api/test');
+                const data = await response.json();
+                
+                document.getElementById('system-status').innerHTML = `
+                    <div class="status-ok">✅ Сервер работает</div>
+                    <div>Время: ${data.timestamp}</div>
+                    <div>Supabase: ${data.supabaseConnected ? '✅ Подключен' : '❌ Не подключен'}</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('system-status').innerHTML = `
+                    <div class="status-error">❌ Ошибка подключения к серверу</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+
+        async function testDatabase() {
+            try {
+                const response = await fetch('/api/full-config');
+                const data = await response.json();
+                
+                document.getElementById('database-status').innerHTML = `
+                    <div class="status-ok">✅ База данных работает</div>
+                    <div>Данные загружены: ${data.database ? 'Да' : 'Нет'}</div>
+                    <pre>${JSON.stringify(data.rsvpStats || {}, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('database-status').innerHTML = `
+                    <div class="status-error">❌ Ошибка базы данных</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+
+        async function testTelegram() {
+            try {
+                const response = await fetch('/api/setup-webhook', { method: 'POST' });
+                const data = await response.json();
+                
+                document.getElementById('telegram-status').innerHTML = `
+                    <div class="${data.success ? 'status-ok' : 'status-error'}">
+                        ${data.success ? '✅' : '❌'} Telegram webhook
+                    </div>
+                    <div>URL: ${data.webhookUrl || 'Не настроен'}</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('telegram-status').innerHTML = `
+                    <div class="status-error">❌ Ошибка Telegram</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch('/api/config');
+                const data = await response.json();
+                
+                document.getElementById('config-status').innerHTML = `
+                    <div class="status-ok">✅ Конфигурация загружена</div>
+                    <div>Имена: ${data.coupleNames}</div>
+                    <div>Дата: ${data.weddingDate}</div>
+                    <div>Ресторан: ${data.restaurant?.name}</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('config-status').innerHTML = `
+                    <div class="status-error">❌ Ошибка конфигурации</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+
+        async function testImages() {
+            try {
+                const response = await fetch('/api/images');
+                const data = await response.json();
+                
+                document.getElementById('images-status').innerHTML = `
+                    <div class="status-ok">✅ Изображения</div>
+                    <div>Найдено: ${data.images?.length || 0} изображений</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('images-status').innerHTML = `
+                    <div class="status-error">❌ Ошибка изображений</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+
+        async function testRSVP() {
+            try {
+                const response = await fetch('/api/responses');
+                const data = await response.json();
+                
+                document.getElementById('rsvp-status').innerHTML = `
+                    <div class="status-ok">✅ RSVP система</div>
+                    <div>Всего ответов: ${data.total || 0}</div>
+                    <div>Придут: ${data.stats?.coming || 0}</div>
+                    <div>С гостем: ${data.stats?.withGuest || 0}</div>
+                    <div>Не придут: ${data.stats?.notComing || 0}</div>
+                    <pre>${JSON.stringify(data.stats || {}, null, 2)}</pre>
+                `;
+            } catch (error) {
+                document.getElementById('rsvp-status').innerHTML = `
+                    <div class="status-error">❌ Ошибка RSVP</div>
+                    <div>${error.message}</div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

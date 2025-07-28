@@ -524,7 +524,28 @@ async function simulateLoading() {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🎉 Инициализация свадебного сайта...');
+    console.log('🎉 Инициализация свадебного сайта v4.1...');
+    console.log('📱 Проверка отображения по умолчанию...');
+    
+    // Проверяем, что фото отображается по умолчанию
+    const photoDisplay = document.getElementById('photo-display');
+    const dateDisplay = document.getElementById('date-display');
+    const overlayElements = document.querySelectorAll('.photo-date-overlay');
+    
+    console.log('📸 Фото отображение:', photoDisplay ? photoDisplay.style.display : 'не найдено');
+    console.log('📅 Дата отображение:', dateDisplay ? dateDisplay.style.display : 'не найдено');
+    console.log('🎭 Оверлей элементов найдено:', overlayElements.length);
+    
+    // Принудительно устанавливаем правильное отображение
+    if (photoDisplay && dateDisplay) {
+        photoDisplay.style.display = 'block';
+        dateDisplay.style.display = 'none';
+        console.log('✅ Принудительно установлено отображение фото');
+    }
+    
+    // Проверяем активные кнопки
+    const activeButton = document.querySelector('.toggle-btn.active');
+    console.log('🔘 Активная кнопка:', activeButton ? activeButton.dataset.mode : 'не найдена');
     
     // Запускаем симуляцию загрузки параллельно с реальной инициализацией
     const loadingSimulation = simulateLoading();
