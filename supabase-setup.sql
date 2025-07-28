@@ -1,5 +1,10 @@
--- Создание таблицы для ответов гостей
-CREATE TABLE IF NOT EXISTS wedding_responses (
+-- Удаление существующих политик (если есть)
+DROP POLICY IF EXISTS "Allow public read access to responses" ON wedding_responses;
+DROP POLICY IF EXISTS "Allow public insert access to responses" ON wedding_responses;
+DROP POLICY IF EXISTS "Allow public read access to config" ON site_config;
+
+-- Создание таблицы для RSVP ответов (правильное название)
+CREATE TABLE IF NOT EXISTS rsvp_responses (
     id BIGSERIAL PRIMARY KEY,
     full_name TEXT NOT NULL,
     phone TEXT,
@@ -12,31 +17,33 @@ CREATE TABLE IF NOT EXISTS wedding_responses (
 
 -- Создание таблицы для конфигурации сайта
 CREATE TABLE IF NOT EXISTS site_config (
-    id INTEGER PRIMARY KEY DEFAULT 1,
-    config JSONB NOT NULL DEFAULT '{}',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    CONSTRAINT single_config CHECK (id = 1)
+    id SERIAL PRIMARY KEY,
+    config_key VARCHAR(100) UNIQUE NOT NULL,
+    config_value JSONB NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 -- Создание индексов для оптимизации
-CREATE INDEX IF NOT EXISTS idx_wedding_responses_created_at ON wedding_responses(created_at DESC);
-CREATE INDEX IF NOT EXISTS idx_wedding_responses_attendance ON wedding_responses(attendance);
+CREATE INDEX IF NOT EXISTS idx_rsvp_responses_created_at ON rsvp_responses(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_rsvp_responses_attendance ON rsvp_responses(attendance);
 
 -- Включение Row Level Security (RLS)
-ALTER TABLE wedding_responses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE rsvp_responses ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_config ENABLE ROW LEVEL SECURITY;
 
--- Политики безопасности для публичного доступа (только для чтения ответов)
-CREATE POLICY "Allow public read access to responses" ON wedding_responses
+-- Политики безопасности для rsvp_responses
+CREATE POLICY "Allow public read access to rsvp" ON rsvp_responses
     FOR SELECT USING (true);
 
-CREATE POLICY "Allow public insert access to responses" ON wedding_responses
+CREATE POLICY "Allow public insert to rsvp" ON rsvp_responses
     FOR INSERT WITH CHECK (true);
 
--- Политики для конфигурации сайта (только чтение для публики)
-CREATE POLICY "Allow public read access to config" ON site_config
+-- Политики безопасности для site_config
+CREATE POLICY "Allow public read access to site_config" ON site_config
     FOR SELECT USING (true);
+
+CREATE POLICY "Allow public update to site_config" ON site_config
+    FOR UPDATE USING (true);
 
 -- Функция для автоматического обновления updated_at
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -48,16 +55,19 @@ END;
 $$ language 'plpgsql';
 
 -- Триггеры для автоматического обновления updated_at
-CREATE TRIGGER update_wedding_responses_updated_at 
-    BEFORE UPDATE ON wedding_responses 
+DROP TRIGGER IF EXISTS update_rsvp_responses_updated_at ON rsvp_responses;
+CREATE TRIGGER update_rsvp_responses_updated_at 
+    BEFORE UPDATE ON rsvp_responses 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_site_config_updated_at ON site_config;
 CREATE TRIGGER update_site_config_updated_at 
     BEFORE UPDATE ON site_config 
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
--- Вставка начальной конфигурации
-INSERT INTO site_config (id, config) VALUES (1, '{
+-- Вставка базовой конфигурации (если не существует)
+INSERT INTO site_config (config_key, config_value) 
+SELECT 'wedding_info', '{
     "coupleNames": "Имя & Имя",
     "weddingDate": "2025-08-15",
     "timeline": [
@@ -82,8 +92,7 @@ INSERT INTO site_config (id, config) VALUES (1, '{
     ],
     "restaurant": {
         "name": "Название ресторана",
-        "address": "г. Город, ул. Адрес",
-        "phone": "+7 (XXX) XXX-XX-XX"
+        "address": "г. Город, ул. Адрес"
     },
     "deadline": "10 августа 2025",
     "contact": {
@@ -105,4 +114,22 @@ INSERT INTO site_config (id, config) VALUES (1, '{
         "enabled": false,
         "url": null
     }
-}') ON CONFLICT (id) DO NOTHING;
+}'::jsonb
+WHERE NOT EXISTS (
+    SELECT 1 FROM site_config WHERE config_key = 'wedding_info'
+);
+
+-- Миграция данных из старой таблицы (если существует)
+DO $$
+BEGIN
+    IF EXISTS (SELECT FROM information_schema.tables WHERE table_name = 'wedding_responses') THEN
+        INSERT INTO rsvp_responses (full_name, phone, attendance, guest_name, message, created_at, updated_at)
+        SELECT full_name, phone, attendance, guest_name, message, created_at, updated_at
+        FROM wedding_responses
+        WHERE NOT EXISTS (
+            SELECT 1 FROM rsvp_responses 
+            WHERE rsvp_responses.full_name = wedding_responses.full_name 
+            AND rsvp_responses.created_at = wedding_responses.created_at
+        );
+    END IF;
+END $$;

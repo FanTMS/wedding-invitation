@@ -302,11 +302,21 @@ function openNavigator() {
     }
 }
 
-// Анимации при прокрутке
+// Анимации при прокрутке (оптимизированы для мобильных)
 function initScrollAnimations() {
+    // Отключаем анимации на слабых устройствах
+    const isLowEndDevice = navigator.hardwareConcurrency <= 2 || 
+                          navigator.deviceMemory <= 2 ||
+                          window.innerWidth <= 480;
+    
+    if (isLowEndDevice) {
+        console.log('🔧 Анимации отключены для оптимизации производительности');
+        return;
+    }
+    
     const observerOptions = {
         threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
+        rootMargin: '0px 0px -30px 0px'
     };
     
     const observer = new IntersectionObserver(function(entries) {
@@ -321,8 +331,8 @@ function initScrollAnimations() {
     const sections = document.querySelectorAll('section:not(.hero)');
     sections.forEach(section => {
         section.style.opacity = '0';
-        section.style.transform = 'translateY(30px)';
-        section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'opacity 0.4s ease, transform 0.4s ease';
         observer.observe(section);
     });
 }
@@ -359,6 +369,89 @@ async function setupTelegramWebhook() {
     }
 }
 
+// Определение мобильного устройства
+function isMobileDevice() {
+    return /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) || 
+           window.innerWidth <= 768;
+}
+
+// Оптимизация для мобильных устройств
+function initMobileOptimizations() {
+    if (!isMobileDevice()) return;
+    
+    // Предотвращение зума при фокусе на input
+    const inputs = document.querySelectorAll('input, textarea, select');
+    inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+            if (this.style.fontSize !== '16px') {
+                this.style.fontSize = '16px';
+            }
+        });
+        
+        input.addEventListener('blur', function() {
+            this.style.fontSize = '';
+        });
+    });
+    
+    // Оптимизация touch событий
+    let touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', function(e) {
+        const touchY = e.touches[0].clientY;
+        const touchDiff = touchStartY - touchY;
+        
+        // Предотвращение bounce эффекта на iOS
+        if (document.body.scrollTop === 0 && touchDiff < 0) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    // Улучшение производительности прокрутки
+    let ticking = false;
+    function updateScrollPosition() {
+        // Оптимизированная обработка прокрутки
+        ticking = false;
+    }
+    
+    document.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateScrollPosition);
+            ticking = true;
+        }
+    }, { passive: true });
+    
+    console.log('📱 Мобильные оптимизации активированы');
+}
+
+// Ленивая загрузка изображений
+function initLazyLoading() {
+    const images = document.querySelectorAll('img[data-src]');
+    
+    if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const img = entry.target;
+                    img.src = img.dataset.src;
+                    img.classList.remove('lazy');
+                    imageObserver.unobserve(img);
+                }
+            });
+        });
+        
+        images.forEach(img => imageObserver.observe(img));
+    } else {
+        // Fallback для старых браузеров
+        images.forEach(img => {
+            img.src = img.dataset.src;
+            img.classList.remove('lazy');
+        });
+    }
+}
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🎉 Инициализация свадебного сайта...');
@@ -371,6 +464,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     initRSVPForm();
     initScrollAnimations();
     initSmoothScroll();
+    initMobileOptimizations();
+    initLazyLoading();
     
     // Настраиваем webhook для бота
     await setupTelegramWebhook();
@@ -393,6 +488,24 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
     }
+    
+    // Обработка изменения ориентации экрана
+    window.addEventListener('orientationchange', function() {
+        setTimeout(() => {
+            window.scrollTo(0, 0);
+        }, 100);
+    });
+    
+    // Предзагрузка критических ресурсов
+    const criticalImages = [
+        SITE_CONFIG.images.heroMainPhoto,
+        SITE_CONFIG.images.couple
+    ].filter(Boolean);
+    
+    criticalImages.forEach(src => {
+        const img = new Image();
+        img.src = src;
+    });
     
     console.log('✅ Сайт инициализирован успешно!');
 });
