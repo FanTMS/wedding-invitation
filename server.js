@@ -51,6 +51,22 @@ app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Добавляем multer для загрузки файлов
+const multer = require('multer');
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 10 * 1024 * 1024 // 10MB
+    },
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype.startsWith('image/')) {
+            cb(null, true);
+        } else {
+            cb(new Error('Только изображения разрешены!'), false);
+        }
+    }
+});
+
 // Статические файлы
 app.use(express.static(path.join(__dirname), {
     maxAge: '1d',
@@ -852,6 +868,175 @@ app.get('/', (req, res) => {
 // Диагностическая страница
 app.get('/debug', (req, res) => {
     res.sendFile(path.join(__dirname, 'debug.html'));
+});
+
+// Админ-панель
+app.get('/admin', (req, res) => {
+    res.sendFile(path.join(__dirname, 'admin.html'));
+});
+
+// API для загрузки изображений в Supabase Storage
+app.post('/api/upload-image', upload.single('image'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ error: 'Файл не найден' });
+        }
+
+        if (!SUPABASE_CONFIG.client) {
+            return res.status(500).json({ error: 'Supabase не настроен' });
+        }
+
+        const { type } = req.body;
+        const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
+        
+        if (!validTypes.includes(type)) {
+            return res.status(400).json({ error: 'Неверный тип изображения' });
+        }
+
+        // Генерируем уникальное имя файла
+        const fileExt = req.file.originalname.split('.').pop();
+        const fileName = `${type}_${Date.now()}.${fileExt}`;
+        const filePath = `wedding-images/${fileName}`;
+
+        console.log(`📸 Загружаем изображение ${type}:`, fileName);
+
+        // Загружаем файл в Supabase Storage
+        const { data: uploadData, error: uploadError } = await SUPABASE_CONFIG.client.storage
+            .from('wedding-images')
+            .upload(filePath, req.file.buffer, {
+                contentType: req.file.mimetype,
+                upsert: true
+            });
+
+        if (uploadError) {
+            console.error('Ошибка загрузки в Storage:', uploadError);
+            return res.status(500).json({ error: 'Ошибка загрузки файла: ' + uploadError.message });
+        }
+
+        // Получаем публичный URL
+        const { data: urlData } = SUPABASE_CONFIG.client.storage
+            .from('wedding-images')
+            .getPublicUrl(filePath);
+
+        const imageUrl = urlData.publicUrl;
+        console.log(`📸 Файл загружен, URL:`, imageUrl);
+
+        // Деактивируем старые изображения этого типа
+        await SUPABASE_CONFIG.client
+            .from('site_images')
+            .update({ is_active: false })
+            .eq('image_type', type);
+
+        // Сохраняем информацию об изображении в базу данных
+        const { error: dbError } = await SUPABASE_CONFIG.client
+            .from('site_images')
+            .insert([{
+                image_type: type,
+                image_url: imageUrl,
+                file_name: fileName,
+                file_size: req.file.size,
+                mime_type: req.file.mimetype,
+                is_active: true
+            }]);
+
+        if (dbError) {
+            console.error('Ошибка сохранения в БД:', dbError);
+            return res.status(500).json({ error: 'Ошибка сохранения в базу данных: ' + dbError.message });
+        }
+
+        // Обновляем конфигурацию сайта
+        const photoMapping = {
+            'couple': 'couple',
+            'restaurant': 'restaurant',
+            'hero1': 'heroPhoto1',
+            'hero2': 'heroPhoto2',
+            'heromain': 'heroMainPhoto'
+        };
+
+        siteConfig.images[photoMapping[type]] = imageUrl;
+        await saveSiteConfig();
+
+        console.log(`✅ Изображение ${type} успешно загружено и сохранено`);
+
+        res.json({
+            success: true,
+            message: 'Изображение успешно загружено',
+            imageUrl: imageUrl,
+            fileName: fileName,
+            type: type
+        });
+
+    } catch (error) {
+        console.error('Ошибка загрузки изображения:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера: ' + error.message });
+    }
+});
+
+// API для удаления изображения
+app.delete('/api/delete-image/:id', async (req, res) => {
+    try {
+        if (!SUPABASE_CONFIG.client) {
+            return res.status(500).json({ error: 'Supabase не настроен' });
+        }
+
+        const { id } = req.params;
+
+        // Получаем информацию об изображении
+        const { data: imageData, error: fetchError } = await SUPABASE_CONFIG.client
+            .from('site_images')
+            .select('*')
+            .eq('id', id)
+            .single();
+
+        if (fetchError || !imageData) {
+            return res.status(404).json({ error: 'Изображение не найдено' });
+        }
+
+        // Удаляем файл из Storage
+        const filePath = `wedding-images/${imageData.file_name}`;
+        const { error: deleteError } = await SUPABASE_CONFIG.client.storage
+            .from('wedding-images')
+            .remove([filePath]);
+
+        if (deleteError) {
+            console.error('Ошибка удаления из Storage:', deleteError);
+        }
+
+        // Удаляем запись из базы данных
+        const { error: dbError } = await SUPABASE_CONFIG.client
+            .from('site_images')
+            .delete()
+            .eq('id', id);
+
+        if (dbError) {
+            return res.status(500).json({ error: 'Ошибка удаления из базы данных: ' + dbError.message });
+        }
+
+        // Обновляем конфигурацию сайта
+        const photoMapping = {
+            'couple': 'couple',
+            'restaurant': 'restaurant',
+            'hero1': 'heroPhoto1',
+            'hero2': 'heroPhoto2',
+            'heromain': 'heroMainPhoto'
+        };
+
+        if (photoMapping[imageData.image_type]) {
+            siteConfig.images[photoMapping[imageData.image_type]] = null;
+            await saveSiteConfig();
+        }
+
+        console.log(`✅ Изображение ${imageData.image_type} успешно удалено`);
+
+        res.json({
+            success: true,
+            message: 'Изображение успешно удалено'
+        });
+
+    } catch (error) {
+        console.error('Ошибка удаления изображения:', error);
+        res.status(500).json({ error: 'Внутренняя ошибка сервера: ' + error.message });
+    }
 });
 
 // Обработка всех остальных маршрутов (SPA fallback)

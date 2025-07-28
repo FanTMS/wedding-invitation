@@ -106,6 +106,22 @@ function updateHeroPhotos() {
     updateHeroPhoto('hero-photo-1', SITE_CONFIG.images.heroPhoto1);
     updateHeroPhoto('hero-photo-2', SITE_CONFIG.images.heroPhoto2);
     updateHeroPhoto('hero-main-photo', SITE_CONFIG.images.heroMainPhoto);
+    
+    // Показываем/скрываем placeholder для главного фото
+    const mainPhoto = document.getElementById('hero-main-photo');
+    const placeholder = document.querySelector('.main-photo-placeholder');
+    
+    if (mainPhoto && placeholder) {
+        if (SITE_CONFIG.images.heroMainPhoto) {
+            mainPhoto.style.display = 'block';
+            placeholder.style.display = 'none';
+            console.log('✅ Главное фото отображено:', SITE_CONFIG.images.heroMainPhoto);
+        } else {
+            mainPhoto.style.display = 'none';
+            placeholder.style.display = 'flex';
+            console.log('📷 Показан placeholder для главного фото');
+        }
+    }
 }
 
 function updateHeroPhoto(elementId, imageUrl) {

@@ -206,6 +206,29 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+-- 16. Создание bucket для изображений в Storage
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'wedding-images',
+    'wedding-images',
+    true,
+    10485760, -- 10MB
+    ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+) ON CONFLICT (id) DO NOTHING;
+
+-- 17. Настройка политик для Storage bucket
+CREATE POLICY "Allow public read access" ON storage.objects
+FOR SELECT USING (bucket_id = 'wedding-images');
+
+CREATE POLICY "Allow authenticated upload" ON storage.objects
+FOR INSERT WITH CHECK (bucket_id = 'wedding-images');
+
+CREATE POLICY "Allow authenticated update" ON storage.objects
+FOR UPDATE USING (bucket_id = 'wedding-images');
+
+CREATE POLICY "Allow authenticated delete" ON storage.objects
+FOR DELETE USING (bucket_id = 'wedding-images');
+
 -- Готово! Теперь ваша база данных настроена для полноценной работы свадебного сайта.
 -- 
 -- Основные таблицы:
