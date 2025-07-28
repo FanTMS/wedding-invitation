@@ -55,8 +55,13 @@ function updateSiteDisplay() {
     const date = new Date(SITE_CONFIG.weddingDate);
     const dateNumber = document.querySelector('.date-number');
     const dateMonth = document.querySelector('.date-month');
+    const overlayDateNumber = document.querySelector('.overlay-date-number');
+    const overlayDateMonth = document.querySelector('.overlay-date-month');
+    
     if (dateNumber) dateNumber.textContent = date.getDate();
     if (dateMonth) dateMonth.textContent = date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).toUpperCase();
+    if (overlayDateNumber) overlayDateNumber.textContent = date.getDate();
+    if (overlayDateMonth) overlayDateMonth.textContent = date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).toUpperCase();
     
     // Обновляем ресторан
     document.querySelectorAll('[data-restaurant-name]').forEach(el => {
@@ -452,62 +457,150 @@ function initLazyLoading() {
     }
 }
 
+// Управление экраном загрузки
+let loadingProgress = 0;
+let loadingTexts = [
+    'Загружаем данные о торжестве...',
+    'Подготавливаем фотографии...',
+    'Настраиваем уведомления...',
+    'Финальные штрихи...',
+    'Готово! Добро пожаловать!'
+];
+
+function updateLoadingText() {
+    const loadingTextElement = document.querySelector('.loading-text');
+    if (loadingTextElement && loadingProgress < loadingTexts.length) {
+        loadingTextElement.textContent = loadingTexts[loadingProgress];
+        loadingProgress++;
+    }
+}
+
+function hideLoadingScreen() {
+    const loadingScreen = document.getElementById('loading-screen');
+    const body = document.body;
+    
+    if (loadingScreen) {
+        // Финальное обновление текста
+        const loadingTextElement = document.querySelector('.loading-text');
+        if (loadingTextElement) {
+            loadingTextElement.textContent = 'Готово! Добро пожаловать!';
+        }
+        
+        // Задержка перед скрытием
+        setTimeout(() => {
+            loadingScreen.classList.add('hidden');
+            body.classList.remove('loading');
+            
+            // Удаляем экран загрузки из DOM через 500мс
+            setTimeout(() => {
+                if (loadingScreen.parentNode) {
+                    loadingScreen.parentNode.removeChild(loadingScreen);
+                }
+            }, 500);
+        }, 500);
+    }
+}
+
+// Симуляция загрузки с реалистичными этапами
+async function simulateLoading() {
+    const steps = [
+        { delay: 300, text: 0 },   // Загружаем данные о торжестве
+        { delay: 600, text: 1 },   // Подготавливаем фотографии
+        { delay: 400, text: 2 },   // Настраиваем уведомления
+        { delay: 500, text: 3 },   // Финальные штрихи
+        { delay: 300, text: 4 }    // Готово!
+    ];
+    
+    for (let step of steps) {
+        await new Promise(resolve => {
+            setTimeout(() => {
+                loadingProgress = step.text;
+                updateLoadingText();
+                resolve();
+            }, step.delay);
+        });
+    }
+}
+
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🎉 Инициализация свадебного сайта...');
     
-    // Загружаем конфигурацию с сервера
-    await loadConfigFromServer();
+    // Запускаем симуляцию загрузки параллельно с реальной инициализацией
+    const loadingSimulation = simulateLoading();
     
-    // Инициализируем компоненты
-    initHeroToggle();
-    initRSVPForm();
-    initScrollAnimations();
-    initSmoothScroll();
-    initMobileOptimizations();
-    initLazyLoading();
-    
-    // Настраиваем webhook для бота
-    await setupTelegramWebhook();
-    
-    // Закрытие модальных окон при клике вне их
-    const modal = document.getElementById('success-modal');
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                closeModal();
-            }
+    // Реальная инициализация
+    const initializationTasks = async () => {
+        // Загружаем конфигурацию с сервера
+        await loadConfigFromServer();
+        
+        // Инициализируем компоненты
+        initHeroToggle();
+        initRSVPForm();
+        initScrollAnimations();
+        initSmoothScroll();
+        initMobileOptimizations();
+        initLazyLoading();
+        
+        // Настраиваем webhook для бота
+        await setupTelegramWebhook();
+        
+        // Предзагрузка критических ресурсов
+        const criticalImages = [
+            SITE_CONFIG.images.heroMainPhoto,
+            SITE_CONFIG.images.couple,
+            SITE_CONFIG.images.restaurant
+        ].filter(Boolean);
+        
+        // Предзагружаем изображения
+        const imagePromises = criticalImages.map(src => {
+            return new Promise((resolve) => {
+                const img = new Image();
+                img.onload = resolve;
+                img.onerror = resolve; // Продолжаем даже если изображение не загрузилось
+                img.src = src;
+            });
         });
-    }
+        
+        await Promise.all(imagePromises);
+    };
     
-    const tourModal = document.getElementById('virtual-tour-modal');
-    if (tourModal) {
-        tourModal.addEventListener('click', function(e) {
-            if (e.target === tourModal) {
-                closeVirtualTour();
-            }
+    // Ждем завершения и симуляции, и реальной инициализации
+    await Promise.all([loadingSimulation, initializationTasks()]);
+    
+    // Скрываем экран загрузки
+    hideLoadingScreen();
+    
+    // Инициализируем обработчики после скрытия загрузки
+    setTimeout(() => {
+        // Закрытие модальных окон при клике вне их
+        const modal = document.getElementById('success-modal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+        }
+        
+        const tourModal = document.getElementById('virtual-tour-modal');
+        if (tourModal) {
+            tourModal.addEventListener('click', function(e) {
+                if (e.target === tourModal) {
+                    closeVirtualTour();
+                }
+            });
+        }
+        
+        // Обработка изменения ориентации экрана
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                window.scrollTo(0, 0);
+            }, 100);
         });
-    }
-    
-    // Обработка изменения ориентации экрана
-    window.addEventListener('orientationchange', function() {
-        setTimeout(() => {
-            window.scrollTo(0, 0);
-        }, 100);
-    });
-    
-    // Предзагрузка критических ресурсов
-    const criticalImages = [
-        SITE_CONFIG.images.heroMainPhoto,
-        SITE_CONFIG.images.couple
-    ].filter(Boolean);
-    
-    criticalImages.forEach(src => {
-        const img = new Image();
-        img.src = src;
-    });
-    
-    console.log('✅ Сайт инициализирован успешно!');
+        
+        console.log('✅ Сайт инициализирован успешно!');
+    }, 600);
 });
 
 // Экспорт функций для глобального использования

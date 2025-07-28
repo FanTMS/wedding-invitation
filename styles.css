@@ -67,6 +67,326 @@ body {
     touch-action: manipulation;
 }
 
+/* Экран загрузки */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #F0FFF0 0%, #E6FFE6 50%, #90EE90 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    visibility: hidden;
+}
+
+.loading-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 0 20px;
+}
+
+.loading-logo {
+    margin-bottom: 30px;
+    animation: logoFloat 3s ease-in-out infinite;
+}
+
+.loading-logo i {
+    font-size: 4em;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    display: block;
+    text-shadow: 0 2px 10px rgba(144, 238, 144, 0.3);
+}
+
+.loading-title {
+    font-family: 'Dancing Script', cursive;
+    font-size: 2.5em;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.loading-subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2em;
+    color: var(--text-light);
+    margin-bottom: 40px;
+    font-style: italic;
+}
+
+.loading-spinner {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 30px;
+}
+
+.spinner-ring {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border: 3px solid transparent;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1.5s linear infinite;
+}
+
+.spinner-ring:nth-child(2) {
+    width: 80%;
+    height: 80%;
+    top: 10%;
+    left: 10%;
+    border-top-color: var(--secondary-color);
+    animation-duration: 2s;
+    animation-direction: reverse;
+}
+
+.spinner-ring:nth-child(3) {
+    width: 60%;
+    height: 60%;
+    top: 20%;
+    left: 20%;
+    border-top-color: var(--light-green);
+    animation-duration: 1s;
+}
+
+.loading-progress {
+    width: 200px;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 2px;
+    margin: 0 auto 20px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+    border-radius: 2px;
+    width: 0%;
+    animation: progressFill 2.5s ease-out forwards;
+}
+
+.loading-text {
+    font-size: 0.9em;
+    color: var(--text-light);
+    opacity: 0.8;
+    animation: textPulse 2s ease-in-out infinite;
+}
+
+.loading-hearts {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.loading-heart {
+    position: absolute;
+    color: var(--primary-color);
+    opacity: 0.2;
+    animation: heartFloat 4s ease-in-out infinite;
+}
+
+.loading-heart:nth-child(1) {
+    left: 10%;
+    top: 20%;
+    font-size: 1.5em;
+    animation-delay: 0s;
+}
+
+.loading-heart:nth-child(2) {
+    right: 15%;
+    top: 30%;
+    font-size: 1.2em;
+    animation-delay: 1s;
+}
+
+.loading-heart:nth-child(3) {
+    left: 20%;
+    bottom: 25%;
+    font-size: 1.8em;
+    animation-delay: 2s;
+}
+
+.loading-heart:nth-child(4) {
+    right: 25%;
+    bottom: 35%;
+    font-size: 1.3em;
+    animation-delay: 0.5s;
+}
+
+.loading-heart:nth-child(5) {
+    left: 50%;
+    top: 15%;
+    font-size: 1.6em;
+    animation-delay: 1.5s;
+}
+
+/* Анимации загрузки */
+@keyframes logoFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes progressFill {
+    0% {
+        width: 0%;
+    }
+
+    30% {
+        width: 30%;
+    }
+
+    60% {
+        width: 60%;
+    }
+
+    90% {
+        width: 85%;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes textPulse {
+
+    0%,
+    100% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+@keyframes heartFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.2;
+    }
+
+    25% {
+        transform: translateY(-15px) rotate(5deg);
+        opacity: 0.4;
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(-3deg);
+        opacity: 0.3;
+    }
+
+    75% {
+        transform: translateY(-20px) rotate(8deg);
+        opacity: 0.5;
+    }
+}
+
+/* Скрытие основного контента во время загрузки */
+body.loading .container {
+    opacity: 0;
+    visibility: hidden;
+}
+
+body.loading .bg-elements {
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Адаптивность экрана загрузки */
+@media (max-width: 768px) {
+    .loading-title {
+        font-size: 2em;
+    }
+
+    .loading-subtitle {
+        font-size: 1.1em;
+        margin-bottom: 30px;
+    }
+
+    .loading-logo i {
+        font-size: 3.5em;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 25px;
+    }
+
+    .loading-progress {
+        width: 180px;
+    }
+}
+
+@media (max-width: 480px) {
+    .loading-content {
+        padding: 0 15px;
+    }
+
+    .loading-title {
+        font-size: 1.8em;
+    }
+
+    .loading-subtitle {
+        font-size: 1em;
+        margin-bottom: 25px;
+    }
+
+    .loading-logo i {
+        font-size: 3em;
+        margin-bottom: 10px;
+    }
+
+    .loading-spinner {
+        width: 45px;
+        height: 45px;
+        margin-bottom: 20px;
+    }
+
+    .loading-progress {
+        width: 160px;
+        margin-bottom: 15px;
+    }
+
+    .loading-text {
+        font-size: 0.85em;
+    }
+}
+
 /* Фоновые элементы */
 .bg-elements {
     position: fixed;
@@ -77,6 +397,40 @@ body {
     pointer-events: none;
     z-index: -1;
     will-change: transform;
+}
+
+.bg-elements::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 20% 30%, rgba(144, 238, 144, 0.1) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(102, 205, 170, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(240, 255, 240, 0.15) 0%, transparent 50%);
+    animation: backgroundShift 20s ease-in-out infinite;
+}
+
+@keyframes backgroundShift {
+
+    0%,
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+
+    25% {
+        transform: translateX(10px) translateY(-5px);
+    }
+
+    50% {
+        transform: translateX(-5px) translateY(10px);
+    }
+
+    75% {
+        transform: translateX(-10px) translateY(-8px);
+    }
 }
 
 /* Оптимизация для мобильных - скрытие фоновых элементов на маленьких экранах */
@@ -163,6 +517,200 @@ body {
     opacity: 0.03;
 }
 
+/* Декоративные элементы */
+.decorative-elements {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.sparkle {
+    position: absolute;
+    font-size: 1.2em;
+    opacity: 0;
+    animation: sparkleFloat 6s ease-in-out infinite;
+}
+
+.sparkle-1 {
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.sparkle-2 {
+    top: 25%;
+    right: 15%;
+    animation-delay: 1.5s;
+}
+
+.sparkle-3 {
+    top: 60%;
+    left: 20%;
+    animation-delay: 3s;
+}
+
+.sparkle-4 {
+    top: 75%;
+    right: 25%;
+    animation-delay: 4.5s;
+}
+
+.sparkle-5 {
+    top: 40%;
+    left: 50%;
+    animation-delay: 2s;
+}
+
+.magic-dust {
+    position: absolute;
+    font-size: 0.8em;
+    opacity: 0;
+    animation: magicDustFloat 8s ease-in-out infinite;
+}
+
+.magic-dust-1 {
+    top: 35%;
+    left: 25%;
+    animation-delay: 1s;
+}
+
+.magic-dust-2 {
+    top: 55%;
+    right: 30%;
+    animation-delay: 3s;
+}
+
+.magic-dust-3 {
+    bottom: 20%;
+    left: 40%;
+    animation-delay: 5s;
+}
+
+.floating-decorations {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+    overflow: hidden;
+}
+
+.floating-element {
+    position: absolute;
+    font-size: 1.5em;
+    opacity: 0;
+    animation: floatingElementDance 12s ease-in-out infinite;
+}
+
+.floating-element-1 {
+    top: 20%;
+    left: 15%;
+    animation-delay: 0s;
+}
+
+.floating-element-2 {
+    top: 45%;
+    right: 20%;
+    animation-delay: 3s;
+}
+
+.floating-element-3 {
+    bottom: 30%;
+    left: 25%;
+    animation-delay: 6s;
+}
+
+.floating-element-4 {
+    bottom: 15%;
+    right: 15%;
+    animation-delay: 9s;
+}
+
+@keyframes sparkleFloat {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateY(0px) scale(0.8);
+    }
+
+    10%,
+    90% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: translateY(-20px) scale(1.2);
+    }
+}
+
+@keyframes magicDustFloat {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateY(0px) rotate(0deg) scale(0.5);
+    }
+
+    25% {
+        opacity: 0.6;
+        transform: translateY(-15px) rotate(90deg) scale(0.8);
+    }
+
+    50% {
+        opacity: 0.4;
+        transform: translateY(-25px) rotate(180deg) scale(1);
+    }
+
+    75% {
+        opacity: 0.7;
+        transform: translateY(-10px) rotate(270deg) scale(0.6);
+    }
+}
+
+@keyframes floatingElementDance {
+
+    0%,
+    100% {
+        opacity: 0;
+        transform: translateX(0px) translateY(0px) rotate(0deg) scale(0.8);
+    }
+
+    10% {
+        opacity: 0.8;
+        transform: translateX(10px) translateY(-20px) rotate(45deg) scale(1);
+    }
+
+    25% {
+        opacity: 0.6;
+        transform: translateX(-5px) translateY(-35px) rotate(90deg) scale(1.1);
+    }
+
+    50% {
+        opacity: 0.9;
+        transform: translateX(15px) translateY(-25px) rotate(180deg) scale(0.9);
+    }
+
+    75% {
+        opacity: 0.5;
+        transform: translateX(-10px) translateY(-40px) rotate(270deg) scale(1.2);
+    }
+
+    90% {
+        opacity: 0.7;
+        transform: translateX(5px) translateY(-15px) rotate(315deg) scale(1);
+    }
+}
+
 /* Контейнер */
 .container {
     max-width: 800px;
@@ -170,6 +718,20 @@ body {
     background: var(--white);
     box-shadow: var(--shadow-heavy);
     position: relative;
+    z-index: 1;
+    border-radius: 0;
+    overflow: hidden;
+}
+
+.container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent 48%, rgba(144, 238, 144, 0.02) 50%, transparent 52%);
+    pointer-events: none;
     z-index: 1;
 }
 
@@ -185,6 +747,35 @@ body {
     padding: 60px 40px;
     position: relative;
     overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 30% 20%, rgba(144, 238, 144, 0.15) 0%, transparent 40%),
+        radial-gradient(circle at 70% 80%, rgba(102, 205, 170, 0.12) 0%, transparent 40%),
+        linear-gradient(45deg, transparent 30%, rgba(240, 255, 240, 0.1) 50%, transparent 70%);
+    animation: heroShimmer 15s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes heroShimmer {
+
+    0%,
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: translateX(10px);
+    }
 }
 
 /* Фоновые фотографии в hero */
@@ -301,10 +892,10 @@ body {
 
 .main-couple-photo {
     position: relative;
-    width: 300px;
-    height: 400px;
+    width: 400px;
+    height: 500px;
     margin: 0 auto;
-    border-radius: 20px;
+    border-radius: 25px;
     overflow: hidden;
     box-shadow: var(--shadow-heavy);
     background: rgba(255, 255, 255, 0.9);
@@ -326,6 +917,7 @@ body {
     justify-content: center;
     color: var(--text-light);
     font-size: 1.1em;
+    background: linear-gradient(135deg, rgba(240, 255, 240, 0.9) 0%, rgba(230, 255, 230, 0.8) 100%);
 }
 
 .main-photo-placeholder i {
@@ -334,27 +926,138 @@ body {
     color: var(--primary-color);
 }
 
+/* Дата поверх фото */
+.photo-date-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(47, 79, 47, 0.9) 0%, rgba(47, 79, 47, 0.7) 50%, transparent 100%);
+    padding: 30px 20px 25px;
+    text-align: center;
+    color: white;
+}
+
+.overlay-date-number {
+    font-size: 3.5em;
+    font-weight: 700;
+    color: var(--primary-color);
+    font-family: 'Cormorant Garamond', serif;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-bottom: 5px;
+    display: block;
+}
+
+.overlay-date-month {
+    font-size: 1.3em;
+    color: white;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    display: block;
+}
+
+.overlay-decorative-line {
+    width: 60px;
+    height: 2px;
+    background: var(--primary-color);
+    margin: 15px auto 10px;
+    border-radius: 1px;
+    box-shadow: 0 0 10px rgba(144, 238, 144, 0.5);
+}
+
 .ornament {
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 15px;
     margin: 30px 0;
+    position: relative;
+}
+
+.ornament::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    opacity: 0.3;
+    z-index: -1;
 }
 
 .ornament i {
     color: var(--secondary-color);
     font-size: 1.5em;
+    transition: all 0.3s ease;
+    animation: ornamentGlow 4s ease-in-out infinite;
 }
 
 .ornament .fa-heart {
     color: var(--primary-color);
     font-size: 1.8em;
+    animation: heartPulse 2s ease-in-out infinite;
+}
+
+@keyframes ornamentGlow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 5px rgba(144, 238, 144, 0.3);
+        transform: scale(1);
+    }
+
+    50% {
+        text-shadow: 0 0 15px rgba(144, 238, 144, 0.6);
+        transform: scale(1.05);
+    }
+}
+
+@keyframes heartPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        text-shadow: 0 0 10px rgba(144, 238, 144, 0.4);
+    }
+
+    50% {
+        transform: scale(1.1);
+        text-shadow: 0 0 20px rgba(144, 238, 144, 0.8);
+    }
 }
 
 .main-title {
     font-family: 'Dancing Script', cursive;
     margin: 40px 0;
+    position: relative;
+}
+
+.main-title::before {
+    content: '';
+    position: absolute;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    opacity: 0.6;
+}
+
+.main-title::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+    opacity: 0.6;
 }
 
 .couple-names {
@@ -364,6 +1067,23 @@ body {
     color: var(--text-dark);
     margin-bottom: 10px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, var(--text-dark) 0%, var(--primary-color) 50%, var(--text-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: titleShine 3s ease-in-out infinite;
+}
+
+@keyframes titleShine {
+
+    0%,
+    100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
 }
 
 .wedding-text {
@@ -372,6 +1092,20 @@ body {
     font-weight: 400;
     color: var(--secondary-color);
     font-family: 'Cormorant Garamond', serif;
+    position: relative;
+    animation: textGlow 4s ease-in-out infinite;
+}
+
+@keyframes textGlow {
+
+    0%,
+    100% {
+        text-shadow: 0 0 5px rgba(102, 205, 170, 0.3);
+    }
+
+    50% {
+        text-shadow: 0 0 15px rgba(102, 205, 170, 0.6);
+    }
 }
 
 .wedding-date {
@@ -442,6 +1176,34 @@ body {
 /* Общие стили секций */
 section {
     padding: 80px 40px;
+    position: relative;
+    overflow: hidden;
+}
+
+section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(144, 238, 144, 0.05), transparent);
+    animation: sectionShine 8s ease-in-out infinite;
+    z-index: 0;
+}
+
+@keyframes sectionShine {
+    0% {
+        left: -100%;
+    }
+
+    50% {
+        left: 100%;
+    }
+
+    100% {
+        left: -100%;
+    }
 }
 
 .section-header {
@@ -469,6 +1231,74 @@ section {
 .quote-section {
     background: var(--accent-color);
     text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.quote-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.quote-leaf {
+    position: absolute;
+    font-size: 2em;
+    opacity: 0.1;
+    animation: leafFloat 8s ease-in-out infinite;
+    color: var(--primary-color);
+}
+
+.quote-leaf-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.quote-leaf-2 {
+    top: 30%;
+    right: 15%;
+    animation-delay: 2s;
+}
+
+.quote-leaf-3 {
+    bottom: 25%;
+    left: 20%;
+    animation-delay: 4s;
+}
+
+.quote-leaf-4 {
+    bottom: 35%;
+    right: 10%;
+    animation-delay: 6s;
+}
+
+@keyframes leafFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.1;
+    }
+
+    25% {
+        transform: translateY(-15px) rotate(5deg);
+        opacity: 0.2;
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(-3deg);
+        opacity: 0.15;
+    }
+
+    75% {
+        transform: translateY(-20px) rotate(8deg);
+        opacity: 0.25;
+    }
 }
 
 .quote-content {
@@ -501,6 +1331,73 @@ cite {
 /* Программа мероприятия */
 .program {
     background: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.program-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.program-ring {
+    position: absolute;
+    border: 2px solid rgba(144, 238, 144, 0.1);
+    border-radius: 50%;
+    animation: ringFloat 12s ease-in-out infinite;
+}
+
+.program-ring-1 {
+    width: 200px;
+    height: 200px;
+    top: 10%;
+    left: 5%;
+    animation-delay: 0s;
+}
+
+.program-ring-2 {
+    width: 150px;
+    height: 150px;
+    top: 60%;
+    right: 10%;
+    animation-delay: 4s;
+}
+
+.program-ring-3 {
+    width: 100px;
+    height: 100px;
+    bottom: 20%;
+    left: 15%;
+    animation-delay: 8s;
+}
+
+@keyframes ringFloat {
+
+    0%,
+    100% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0.1;
+    }
+
+    25% {
+        transform: translateY(-20px) rotate(90deg);
+        opacity: 0.2;
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(180deg);
+        opacity: 0.15;
+    }
+
+    75% {
+        transform: translateY(-30px) rotate(270deg);
+        opacity: 0.25;
+    }
 }
 
 .timeline-modern {
@@ -513,6 +1410,7 @@ cite {
     align-items: flex-start;
     margin-bottom: 50px;
     position: relative;
+    text-align: left;
 }
 
 .timeline-item-modern:not(:last-child)::after {
@@ -578,6 +1476,78 @@ cite {
 /* Дресс-код */
 .dress-code-modern {
     background: var(--accent-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.dress-code-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.dress-butterfly {
+    position: absolute;
+    font-size: 2em;
+    opacity: 0.15;
+    animation: butterflyFly 14s ease-in-out infinite;
+    color: var(--primary-color);
+}
+
+.dress-butterfly-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.dress-butterfly-2 {
+    top: 60%;
+    right: 15%;
+    animation-delay: 5s;
+}
+
+.dress-butterfly-3 {
+    bottom: 25%;
+    left: 20%;
+    animation-delay: 10s;
+}
+
+@keyframes butterflyFly {
+
+    0%,
+    100% {
+        transform: translateX(0px) translateY(0px) rotate(0deg) scale(0.8);
+        opacity: 0.1;
+    }
+
+    10% {
+        transform: translateX(20px) translateY(-15px) rotate(15deg) scale(1);
+        opacity: 0.2;
+    }
+
+    25% {
+        transform: translateX(-10px) translateY(-30px) rotate(-10deg) scale(1.1);
+        opacity: 0.15;
+    }
+
+    40% {
+        transform: translateX(30px) translateY(-20px) rotate(20deg) scale(0.9);
+        opacity: 0.25;
+    }
+
+    60% {
+        transform: translateX(-15px) translateY(-35px) rotate(-15deg) scale(1.2);
+        opacity: 0.18;
+    }
+
+    80% {
+        transform: translateX(25px) translateY(-10px) rotate(25deg) scale(1);
+        opacity: 0.22;
+    }
 }
 
 .dress-code-content {
@@ -603,6 +1573,12 @@ cite {
 
 .color-item {
     text-align: center;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.color-item:hover {
+    transform: translateY(-5px);
 }
 
 .color-circle {
@@ -612,17 +1588,44 @@ cite {
     margin: 0 auto 10px;
     border: 3px solid var(--primary-color);
     box-shadow: var(--shadow-light);
-    transition: transform 0.3s ease;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.color-circle::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
+    border-radius: 50%;
+    z-index: -1;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.color-circle:hover::before {
+    opacity: 1;
 }
 
 .color-circle:hover {
     transform: scale(1.1);
+    box-shadow: var(--shadow-medium);
 }
 
 .color-item span {
     font-size: 0.9em;
     color: var(--text-dark);
     font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.color-item:hover span {
+    color: var(--primary-color);
+    font-weight: 600;
 }
 
 .dress-note {
@@ -643,6 +1646,98 @@ cite {
 /* Локация */
 .location-modern {
     background: var(--white);
+    position: relative;
+    overflow: hidden;
+}
+
+.location-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.location-compass {
+    position: absolute;
+    font-size: 2.5em;
+    opacity: 0.1;
+    animation: compassSpin 20s linear infinite;
+    color: var(--primary-color);
+}
+
+.location-compass-1 {
+    top: 20%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.location-compass-2 {
+    bottom: 25%;
+    right: 15%;
+    animation-delay: 10s;
+}
+
+.location-map-pin {
+    position: absolute;
+    font-size: 2em;
+    opacity: 0.12;
+    animation: pinBounce 4s ease-in-out infinite;
+    color: var(--secondary-color);
+}
+
+.location-map-pin-1 {
+    top: 60%;
+    left: 20%;
+    animation-delay: 0s;
+}
+
+.location-map-pin-2 {
+    top: 30%;
+    right: 25%;
+    animation-delay: 2s;
+}
+
+@keyframes compassSpin {
+    0% {
+        transform: rotate(0deg);
+        opacity: 0.1;
+    }
+
+    50% {
+        opacity: 0.15;
+    }
+
+    100% {
+        transform: rotate(360deg);
+        opacity: 0.1;
+    }
+}
+
+@keyframes pinBounce {
+
+    0%,
+    100% {
+        transform: translateY(0px) scale(1);
+        opacity: 0.1;
+    }
+
+    25% {
+        transform: translateY(-10px) scale(1.1);
+        opacity: 0.15;
+    }
+
+    50% {
+        transform: translateY(-5px) scale(1.05);
+        opacity: 0.12;
+    }
+
+    75% {
+        transform: translateY(-15px) scale(1.15);
+        opacity: 0.18;
+    }
 }
 
 .location-content {
@@ -716,11 +1811,28 @@ cite {
     background: var(--gradient-primary);
     color: var(--text-dark);
     box-shadow: var(--shadow-light);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-modern.primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.btn-modern.primary:hover::before {
+    left: 100%;
 }
 
 .btn-modern.primary:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-medium);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-heavy);
 }
 
 .btn-modern.secondary {
@@ -803,6 +1915,81 @@ cite {
 /* RSVP форма */
 .rsvp-modern {
     background: var(--accent-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.rsvp-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.rsvp-flower {
+    position: absolute;
+    font-size: 1.8em;
+    opacity: 0.15;
+    animation: flowerBlossom 10s ease-in-out infinite;
+    color: var(--primary-color);
+}
+
+.rsvp-flower-1 {
+    top: 15%;
+    left: 8%;
+    animation-delay: 0s;
+}
+
+.rsvp-flower-2 {
+    top: 25%;
+    right: 12%;
+    animation-delay: 2s;
+}
+
+.rsvp-flower-3 {
+    bottom: 30%;
+    left: 15%;
+    animation-delay: 4s;
+}
+
+.rsvp-flower-4 {
+    bottom: 20%;
+    right: 8%;
+    animation-delay: 6s;
+}
+
+.rsvp-flower-5 {
+    top: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    animation-delay: 8s;
+}
+
+@keyframes flowerBlossom {
+
+    0%,
+    100% {
+        transform: scale(0.8) rotate(0deg);
+        opacity: 0.1;
+    }
+
+    25% {
+        transform: scale(1.1) rotate(90deg);
+        opacity: 0.2;
+    }
+
+    50% {
+        transform: scale(1) rotate(180deg);
+        opacity: 0.15;
+    }
+
+    75% {
+        transform: scale(1.2) rotate(270deg);
+        opacity: 0.25;
+    }
 }
 
 .rsvp-content {
@@ -1077,6 +2264,97 @@ cite {
     background: var(--text-dark);
     color: var(--white);
     padding: 60px 40px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(144, 238, 144, 0.05) 0%, transparent 50%, rgba(102, 205, 170, 0.03) 100%);
+    z-index: 0;
+}
+
+.footer-decorations {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.footer-star {
+    position: absolute;
+    font-size: 1.5em;
+    opacity: 0.2;
+    animation: starTwinkle 6s ease-in-out infinite;
+    color: var(--primary-color);
+}
+
+.footer-star-1 {
+    top: 15%;
+    left: 10%;
+    animation-delay: 0s;
+}
+
+.footer-star-2 {
+    top: 25%;
+    right: 15%;
+    animation-delay: 1s;
+}
+
+.footer-star-3 {
+    top: 60%;
+    left: 20%;
+    animation-delay: 2s;
+}
+
+.footer-star-4 {
+    bottom: 30%;
+    right: 25%;
+    animation-delay: 3s;
+}
+
+.footer-star-5 {
+    top: 40%;
+    left: 50%;
+    animation-delay: 4s;
+}
+
+.footer-star-6 {
+    bottom: 15%;
+    left: 30%;
+    animation-delay: 5s;
+}
+
+@keyframes starTwinkle {
+
+    0%,
+    100% {
+        opacity: 0.1;
+        transform: scale(0.8) rotate(0deg);
+    }
+
+    25% {
+        opacity: 0.3;
+        transform: scale(1.1) rotate(90deg);
+    }
+
+    50% {
+        opacity: 0.2;
+        transform: scale(1) rotate(180deg);
+    }
+
+    75% {
+        opacity: 0.4;
+        transform: scale(1.2) rotate(270deg);
+    }
 }
 
 .footer-content {
@@ -1232,8 +2510,21 @@ cite {
     }
 
     .main-couple-photo {
-        width: 280px;
-        height: 360px;
+        width: 350px;
+        height: 450px;
+    }
+    
+    .overlay-date-number {
+        font-size: 3em;
+    }
+    
+    .overlay-date-month {
+        font-size: 1.1em;
+        letter-spacing: 1.5px;
+    }
+    
+    .photo-date-overlay {
+        padding: 25px 15px 20px;
     }
 
     .color-palette-modern {
@@ -1320,9 +2611,27 @@ cite {
     }
 
     .main-couple-photo {
-        width: 240px;
-        height: 320px;
-        border-radius: 15px;
+        width: 320px;
+        height: 420px;
+        border-radius: 20px;
+    }
+    
+    .overlay-date-number {
+        font-size: 2.8em;
+    }
+    
+    .overlay-date-month {
+        font-size: 1em;
+        letter-spacing: 1px;
+    }
+    
+    .photo-date-overlay {
+        padding: 20px 15px 18px;
+    }
+    
+    .overlay-decorative-line {
+        width: 50px;
+        margin: 12px auto 8px;
     }
 
     .invitation-text {
@@ -1384,6 +2693,11 @@ cite {
         align-items: center;
     }
 
+    .timeline-content {
+        text-align: center;
+        width: 100%;
+    }
+
     .timeline-item-modern:not(:last-child)::after {
         display: none;
     }
@@ -1427,28 +2741,46 @@ cite {
     }
 
     .color-palette-modern {
-        gap: 15px;
+        gap: 18px;
         justify-content: center;
         max-width: 100%;
         flex-wrap: wrap;
+        padding: 10px 0;
     }
 
     .color-item {
         flex: 0 0 auto;
-        min-width: 70px;
+        min-width: 75px;
+        padding: 8px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.5);
+        transition: all 0.3s ease;
+    }
+
+    .color-item:hover {
+        background: rgba(255, 255, 255, 0.8);
+        transform: translateY(-3px);
     }
 
     .color-circle {
-        width: 45px;
-        height: 45px;
-        margin-bottom: 8px;
+        width: 50px;
+        height: 50px;
+        margin: 0 auto 10px;
+        border-width: 2px;
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
+    }
+
+    .color-circle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(144, 238, 144, 0.3);
     }
 
     .color-item span {
-        font-size: 0.8em;
+        font-size: 0.85em;
         line-height: 1.2;
         display: block;
         text-align: center;
+        font-weight: 500;
     }
 
     .dress-note {
@@ -1743,9 +3075,27 @@ cite {
     }
 
     .main-couple-photo {
-        width: 220px;
-        height: 290px;
-        border-radius: 12px;
+        width: 280px;
+        height: 380px;
+        border-radius: 18px;
+    }
+    
+    .overlay-date-number {
+        font-size: 2.5em;
+    }
+    
+    .overlay-date-month {
+        font-size: 0.95em;
+        letter-spacing: 1px;
+    }
+    
+    .photo-date-overlay {
+        padding: 18px 12px 15px;
+    }
+    
+    .overlay-decorative-line {
+        width: 45px;
+        margin: 10px auto 6px;
     }
 
     .invitation-text {
@@ -1842,23 +3192,41 @@ cite {
     }
 
     .color-palette-modern {
-        gap: 12px;
+        gap: 15px;
+        padding: 15px 5px;
     }
 
     .color-item {
-        min-width: 60px;
+        min-width: 65px;
+        padding: 10px 6px;
+        border-radius: 10px;
+        background: rgba(255, 255, 255, 0.6);
+        box-shadow: 0 2px 8px rgba(144, 238, 144, 0.1);
+    }
+
+    .color-item:hover {
+        background: rgba(255, 255, 255, 0.9);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
-        width: 40px;
-        height: 40px;
-        margin-bottom: 6px;
+        width: 42px;
+        height: 42px;
+        margin: 0 auto 8px;
         border-width: 2px;
+        box-shadow: 0 2px 8px rgba(144, 238, 144, 0.15);
+    }
+
+    .color-circle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.25);
     }
 
     .color-item span {
-        font-size: 0.75em;
+        font-size: 0.78em;
         line-height: 1.1;
+        font-weight: 500;
     }
 
     .dress-note {
@@ -2187,13 +3555,42 @@ cite {
         font-size: 1.4em;
     }
 
+    .color-palette-modern {
+        gap: 12px;
+        padding: 12px 5px;
+    }
+
+    .color-item {
+        min-width: 60px;
+        padding: 8px 4px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.7);
+        box-shadow: 0 1px 6px rgba(144, 238, 144, 0.1);
+    }
+
+    .color-item:hover {
+        background: rgba(255, 255, 255, 0.95);
+        transform: translateY(-1px);
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
+    }
+
     .color-circle {
-        width: 35px;
-        height: 35px;
+        width: 36px;
+        height: 36px;
+        margin: 0 auto 6px;
+        border-width: 2px;
+        box-shadow: 0 1px 6px rgba(144, 238, 144, 0.12);
+    }
+
+    .color-circle:hover {
+        transform: scale(1.03);
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
     }
 
     .color-item span {
-        font-size: 0.7em;
+        font-size: 0.72em;
+        line-height: 1.0;
+        font-weight: 500;
     }
 
     .location-image img {
