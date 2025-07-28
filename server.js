@@ -776,7 +776,23 @@ function formatGuestResponse(data) {
 // Маршрут для настройки webhook Telegram
 app.post('/api/setup-webhook', async (req, res) => {
     try {
-        const webhookUrl = `${req.protocol}://${req.get('host')}/webhook/telegram`;
+        // Определяем правильный URL для webhook
+        let webhookUrl;
+        const host = req.get('host');
+        
+        if (host && host.includes('onrender.com')) {
+            webhookUrl = `https://${host}/webhook/telegram`;
+        } else if (process.env.RENDER_EXTERNAL_URL) {
+            webhookUrl = `${process.env.RENDER_EXTERNAL_URL}/webhook/telegram`;
+        } else {
+            // Для локальной разработки не настраиваем webhook
+            return res.json({ 
+                success: false, 
+                message: 'Webhook не настраивается для локальной разработки',
+                webhookUrl: 'localhost'
+            });
+        }
+        
         const url = `${TELEGRAM_CONFIG.apiUrl}${TELEGRAM_CONFIG.botToken}/setWebhook`;
         
         const response = await fetch(url, {

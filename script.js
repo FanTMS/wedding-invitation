@@ -524,7 +524,7 @@ async function simulateLoading() {
 
 // Инициализация при загрузке страницы
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('🎉 Инициализация свадебного сайта v4.1...');
+    console.log('🎉 Инициализация свадебного сайта v5.0...');
     console.log('📱 Проверка отображения по умолчанию...');
     
     // Проверяем, что фото отображается по умолчанию
@@ -540,6 +540,16 @@ document.addEventListener('DOMContentLoaded', async function() {
     if (photoDisplay && dateDisplay) {
         photoDisplay.style.display = 'block';
         dateDisplay.style.display = 'none';
+        
+        // Также обновляем кнопки
+        const photoBtn = document.querySelector('[data-mode="photo"]');
+        const dateBtn = document.querySelector('[data-mode="date"]');
+        
+        if (photoBtn && dateBtn) {
+            photoBtn.classList.add('active');
+            dateBtn.classList.remove('active');
+        }
+        
         console.log('✅ Принудительно установлено отображение фото');
     }
     
