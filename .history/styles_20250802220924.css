@@ -2699,7 +2699,6 @@ cite {
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
         justify-content: center;
-        justify-items: center;
         max-width: 100%;
         padding: 15px 10px;
         margin: 0 auto;
@@ -3534,8 +3533,6 @@ cite {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        justify-content: center;
-        justify-items: center;
         padding: 12px 5px;
         margin: 0 auto;
         max-width: 250px;
@@ -3556,7 +3553,7 @@ cite {
     .color-item:hover {
         background: rgba(255, 255, 255, 0.95);
         transform: translateY(-1px);
-        box-shadow: none;
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
@@ -3570,7 +3567,7 @@ cite {
 
     .color-circle:hover {
         transform: scale(1.03);
-        box-shadow: none;
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
     }
 
     .color-item span {

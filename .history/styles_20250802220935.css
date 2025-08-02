@@ -3534,8 +3534,6 @@ cite {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        justify-content: center;
-        justify-items: center;
         padding: 12px 5px;
         margin: 0 auto;
         max-width: 250px;

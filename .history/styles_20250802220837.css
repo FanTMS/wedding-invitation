@@ -2699,7 +2699,6 @@ cite {
         grid-template-columns: repeat(3, 1fr);
         gap: 20px;
         justify-content: center;
-        justify-items: center;
         max-width: 100%;
         padding: 15px 10px;
         margin: 0 auto;
@@ -2720,7 +2719,7 @@ cite {
     .color-item:hover {
         background: rgba(255, 255, 255, 0.9);
         transform: translateY(-2px);
-        box-shadow: none;
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
@@ -2734,7 +2733,7 @@ cite {
 
     .color-circle:hover {
         transform: scale(1.05);
-        box-shadow: none;
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.25);
     }
 
     .color-item span {
@@ -3178,7 +3177,7 @@ cite {
     .color-item:hover {
         background: rgba(255, 255, 255, 0.95);
         transform: translateY(-2px);
-        box-shadow: none;
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
@@ -3192,7 +3191,7 @@ cite {
 
     .color-circle:hover {
         transform: scale(1.05);
-        box-shadow: none;
+        box-shadow: 0 4px 12px rgba(144, 238, 144, 0.25);
     }
 
     .color-item span {
@@ -3534,8 +3533,6 @@ cite {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 10px;
-        justify-content: center;
-        justify-items: center;
         padding: 12px 5px;
         margin: 0 auto;
         max-width: 250px;
@@ -3548,7 +3545,7 @@ cite {
         padding: 8px 4px;
         border-radius: 10px;
         background: rgba(255, 255, 255, 0.8);
-        box-shadow: none;
+        box-shadow: 0 1px 6px rgba(144, 238, 144, 0.1);
         min-height: 75px;
         justify-content: center;
     }
@@ -3556,7 +3553,7 @@ cite {
     .color-item:hover {
         background: rgba(255, 255, 255, 0.95);
         transform: translateY(-1px);
-        box-shadow: none;
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
     }
 
     .color-circle {
@@ -3564,13 +3561,13 @@ cite {
         height: 34px;
         margin: 0 auto 5px;
         border-width: 2px;
-        box-shadow: none;
+        box-shadow: 0 1px 6px rgba(144, 238, 144, 0.12);
         flex-shrink: 0;
     }
 
     .color-circle:hover {
         transform: scale(1.03);
-        box-shadow: none;
+        box-shadow: 0 3px 10px rgba(144, 238, 144, 0.2);
     }
 
     .color-item span {
