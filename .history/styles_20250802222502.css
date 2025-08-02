@@ -1546,8 +1546,6 @@ cite {
 }
 
 .color-circle {
-    border: none !important;
-    box-shadow: none !important;
     width: 60px;
     height: 60px;
     border-radius: 50%;
@@ -1560,7 +1558,6 @@ cite {
 }
 
 .color-circle::before {
-    display: none !important;
     content: '';
     position: absolute;
     top: -2px;
@@ -2726,12 +2723,10 @@ cite {
     }
 
     .color-circle {
-    border: none !important;
-    box-shadow: none !important;
         width: 48px;
         height: 48px;
         margin: 0 auto 8px;
-        border-width: 0;
+        border-width: 2px;
         box-shadow: none;
         flex-shrink: 0;
     }
@@ -3186,12 +3181,10 @@ cite {
     }
 
     .color-circle {
-    border: none !important;
-    box-shadow: none !important;
         width: 40px;
         height: 40px;
         margin: 0 auto 6px;
-        border-width: 0;
+        border-width: 2px;
         box-shadow: none;
         flex-shrink: 0;
     }
@@ -3373,7 +3366,7 @@ cite {
     .couple-photo-modern img {
         width: 100px;
         height: 100px;
-        border-width: 0;
+        border-width: 2px;
     }
 
     .footer-text h3 {
@@ -3565,12 +3558,10 @@ cite {
     }
 
     .color-circle {
-    border: none !important;
-    box-shadow: none !important;
         width: 34px;
         height: 34px;
         margin: 0 auto 5px;
-        border-width: 0;
+        border-width: 2px;
         box-shadow: none;
         flex-shrink: 0;
     }

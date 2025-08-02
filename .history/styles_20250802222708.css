@@ -1560,7 +1560,6 @@ cite {
 }
 
 .color-circle::before {
-    display: none !important;
     content: '';
     position: absolute;
     top: -2px;
