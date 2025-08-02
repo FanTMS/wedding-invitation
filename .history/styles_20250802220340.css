@@ -2257,7 +2257,7 @@ cite {
     position: absolute;
     font-size: 1.5em;
     opacity: 0.2;
-    animation: none;
+    animation: starTwinkle 6s ease-in-out infinite;
     color: var(--primary-color);
 }
 

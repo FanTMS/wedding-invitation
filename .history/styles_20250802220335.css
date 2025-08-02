@@ -1572,7 +1572,7 @@ cite {
 }
 
 .color-circle:hover::before {
-    opacity: 0;
+    opacity: 1;
 }
 
 .color-circle:hover {
@@ -2257,7 +2257,7 @@ cite {
     position: absolute;
     font-size: 1.5em;
     opacity: 0.2;
-    animation: none;
+    animation: starTwinkle 6s ease-in-out infinite;
     color: var(--primary-color);
 }
 

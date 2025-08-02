@@ -1572,12 +1572,12 @@ cite {
 }
 
 .color-circle:hover::before {
-    opacity: 0;
+    opacity: 1;
 }
 
 .color-circle:hover {
     transform: scale(1.1);
-    box-shadow: none;
+    box-shadow: var(--shadow-medium);
 }
 
 .color-item span {
@@ -2257,7 +2257,7 @@ cite {
     position: absolute;
     font-size: 1.5em;
     opacity: 0.2;
-    animation: none;
+    animation: starTwinkle 6s ease-in-out infinite;
     color: var(--primary-color);
 }
 
