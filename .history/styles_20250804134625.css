@@ -512,7 +512,7 @@ body.loading .bg-elements {
     height: 100%;
     background-image:
         radial-gradient(circle at 25% 25%, #0B3D0B 1px, transparent 1px),
-        radial-gradient(circle at 75% 75%, #145A32 1px, transparent 1px);
+        radial-gradient(circle at 75% 75%, #66CDAA 1px, transparent 1px);
     background-size: 100px 100px;
     opacity: 0.03;
 }
