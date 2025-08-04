@@ -1530,11 +1530,9 @@ cite {
 .color-palette-modern {
     display: flex;
     justify-content: center;
-    align-items: center;
     gap: 30px;
     margin-bottom: 40px;
     flex-wrap: wrap;
-    text-align: center;
 }
 
 .color-item {
@@ -3548,11 +3546,9 @@ cite {
         flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
-        align-items: center;
         padding: 12px 5px;
         margin: 0 auto;
         max-width: 250px;
-        text-align: center;
     }
 
     .color-item {
