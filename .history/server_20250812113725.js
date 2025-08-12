@@ -700,33 +700,6 @@ app.get('/api/config', async (req, res) => {
     }
 });
 
-// Обновление конфигурации сайта (админ)
-app.post('/api/config', verifyAdmin, async (req, res) => {
-    try {
-        const cfg = req.body || {};
-        // Применяем изменения поверх
-        if (cfg.coupleNames) siteConfig.coupleNames = cfg.coupleNames;
-        if (cfg.weddingDate) siteConfig.weddingDate = cfg.weddingDate;
-        if (cfg.restaurant) {
-            siteConfig.restaurant = { ...siteConfig.restaurant, ...cfg.restaurant };
-        }
-        if (cfg.zags) {
-            siteConfig.zags = { ...siteConfig.zags, ...cfg.zags };
-        }
-        if (cfg.deadline) siteConfig.deadline = cfg.deadline;
-        if (cfg.contact) siteConfig.contact = { ...siteConfig.contact, ...cfg.contact };
-        if (cfg.quote) siteConfig.quote = { ...siteConfig.quote, ...cfg.quote };
-        if (cfg.virtualTour) siteConfig.virtualTour = { ...siteConfig.virtualTour, ...cfg.virtualTour };
-        if (cfg.guestGroup) siteConfig.guestGroup = { ...siteConfig.guestGroup, ...cfg.guestGroup };
-
-        await saveSiteConfig();
-        res.json({ success: true, config: siteConfig });
-    } catch (error) {
-        console.error('Ошибка обновления конфигурации:', error);
-        res.status(500).json({ error: 'Ошибка сохранения конфигурации' });
-    }
-});
-
 // Тестовый маршрут для проверки обновлений
 app.get('/api/test', (req, res) => {
     res.json({
@@ -1007,7 +980,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
             // Локальный fallback: сохраняем файл в /uploads и обновляем siteConfig
             try {
                 const { type } = req.body;
-                const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain', 'comparison', 'zags'];
+                const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
                 if (!validTypes.includes(type)) {
                     return res.status(400).json({ error: 'Неверный тип изображения' });
                 }
@@ -1027,9 +1000,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
                     'restaurant': 'restaurant',
                     'hero1': 'heroPhoto1',
                     'hero2': 'heroPhoto2',
-                    'heromain': 'heroMainPhoto',
-                    'comparison': 'comparisonPhoto',
-                    'zags': 'zagsPhoto'
+                    'heromain': 'heroMainPhoto'
                 };
                 siteConfig.images[photoMapping[type]] = publicUrl;
                 await saveSiteConfig();
@@ -1050,7 +1021,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
         }
 
         const { type } = req.body;
-        const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain', 'comparison', 'zags'];
+        const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
         
         if (!validTypes.includes(type)) {
             return res.status(400).json({ error: 'Неверный тип изображения' });
@@ -1113,9 +1084,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
             'restaurant': 'restaurant',
             'hero1': 'heroPhoto1',
             'hero2': 'heroPhoto2',
-            'heromain': 'heroMainPhoto',
-            'comparison': 'comparisonPhoto',
-            'zags': 'zagsPhoto'
+            'heromain': 'heroMainPhoto'
         };
 
         siteConfig.images[photoMapping[type]] = imageUrl;
@@ -1183,9 +1152,7 @@ app.delete('/api/delete-image/:id', verifyAdmin, async (req, res) => {
             'restaurant': 'restaurant',
             'hero1': 'heroPhoto1',
             'hero2': 'heroPhoto2',
-            'heromain': 'heroMainPhoto',
-            'comparison': 'comparisonPhoto',
-            'zags': 'zagsPhoto'
+            'heromain': 'heroMainPhoto'
         };
 
         if (photoMapping[imageData.image_type]) {

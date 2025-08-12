@@ -1183,9 +1183,7 @@ app.delete('/api/delete-image/:id', verifyAdmin, async (req, res) => {
             'restaurant': 'restaurant',
             'hero1': 'heroPhoto1',
             'hero2': 'heroPhoto2',
-            'heromain': 'heroMainPhoto',
-            'comparison': 'comparisonPhoto',
-            'zags': 'zagsPhoto'
+            'heromain': 'heroMainPhoto'
         };
 
         if (photoMapping[imageData.image_type]) {

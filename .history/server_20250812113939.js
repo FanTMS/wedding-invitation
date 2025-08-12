@@ -1007,7 +1007,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
             // Локальный fallback: сохраняем файл в /uploads и обновляем siteConfig
             try {
                 const { type } = req.body;
-                const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain', 'comparison', 'zags'];
+                const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
                 if (!validTypes.includes(type)) {
                     return res.status(400).json({ error: 'Неверный тип изображения' });
                 }
@@ -1027,9 +1027,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
                     'restaurant': 'restaurant',
                     'hero1': 'heroPhoto1',
                     'hero2': 'heroPhoto2',
-                    'heromain': 'heroMainPhoto',
-                    'comparison': 'comparisonPhoto',
-                    'zags': 'zagsPhoto'
+                    'heromain': 'heroMainPhoto'
                 };
                 siteConfig.images[photoMapping[type]] = publicUrl;
                 await saveSiteConfig();
@@ -1050,7 +1048,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
         }
 
         const { type } = req.body;
-        const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain', 'comparison', 'zags'];
+        const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
         
         if (!validTypes.includes(type)) {
             return res.status(400).json({ error: 'Неверный тип изображения' });
@@ -1113,9 +1111,7 @@ app.post('/api/upload-image', verifyAdmin, upload.single('image'), async (req, r
             'restaurant': 'restaurant',
             'hero1': 'heroPhoto1',
             'hero2': 'heroPhoto2',
-            'heromain': 'heroMainPhoto',
-            'comparison': 'comparisonPhoto',
-            'zags': 'zagsPhoto'
+            'heromain': 'heroMainPhoto'
         };
 
         siteConfig.images[photoMapping[type]] = imageUrl;
@@ -1183,9 +1179,7 @@ app.delete('/api/delete-image/:id', verifyAdmin, async (req, res) => {
             'restaurant': 'restaurant',
             'hero1': 'heroPhoto1',
             'hero2': 'heroPhoto2',
-            'heromain': 'heroMainPhoto',
-            'comparison': 'comparisonPhoto',
-            'zags': 'zagsPhoto'
+            'heromain': 'heroMainPhoto'
         };
 
         if (photoMapping[imageData.image_type]) {
