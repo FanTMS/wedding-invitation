@@ -98,7 +98,7 @@ function updateSiteDisplay() {
         const day = date.getDate();
         const month = date.toLocaleDateString('ru-RU', { month: 'long' });
         const year = date.getFullYear();
-        weddingTextEl.textContent = `Приглашаем вас 25 сентября 2025 года.`;
+        weddingTextEl.textContent = `Приглашаем вас ${day} ${month} ${year} года.`;
     }
     
     // Обновляем ресторан

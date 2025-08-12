@@ -1539,7 +1539,7 @@ cite {
 
 .color-palette-modern {
     display: grid;
-    grid-template-columns: repeat(4, minmax(90px, 1fr));
+    grid-template-columns: repeat(4, 1fr);
     gap: 20px 24px;
     margin: 0 auto 40px;
     max-width: 520px;
@@ -1551,7 +1551,6 @@ cite {
     text-align: center;
     position: relative;
     transition: transform 0.3s ease;
-    width: 120px;
 }
 
 .color-item:hover {
@@ -2788,7 +2787,7 @@ cite {
 
     .color-palette-modern {
         display: grid;
-        grid-template-columns: repeat(3, minmax(90px, 1fr));
+        grid-template-columns: repeat(4, 1fr);
         gap: 16px 16px;
         max-width: 460px;
         margin: 0 auto 30px;
@@ -3260,7 +3259,7 @@ cite {
 
     .color-palette-modern {
         display: grid;
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 14px 14px;
         padding: 12px 5px;
         margin: 0 auto;
@@ -3640,14 +3639,14 @@ cite {
     }
 
     .color-palette-modern {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(120px, 1fr));
+        display: flex;
+        flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
         align-items: center;
         padding: 12px 5px;
         margin: 0 auto;
-        max-width: 260px;
+        max-width: 250px;
         text-align: center;
     }
 

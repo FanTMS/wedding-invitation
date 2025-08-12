@@ -1551,7 +1551,6 @@ cite {
     text-align: center;
     position: relative;
     transition: transform 0.3s ease;
-    width: 120px;
 }
 
 .color-item:hover {
