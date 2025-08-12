@@ -87,12 +87,6 @@ app.use(express.static(path.join(__dirname), {
     etag: true
 }));
 
-// Отдаём статику из /uploads для локально сохранённых изображений
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-    maxAge: '7d',
-    etag: true
-}));
-
 // Хранилище конфигурации сайта (будет загружаться из БД)
 let siteConfig = {
     coupleNames: 'Имя & Имя',

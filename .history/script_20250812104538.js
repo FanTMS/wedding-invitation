@@ -38,29 +38,6 @@ async function loadConfigFromServer() {
             SITE_CONFIG = { ...SITE_CONFIG, ...config };
             updateSiteDisplay();
             console.log('✅ Конфигурация загружена с сервера');
-
-            // Небольшой повторный запрос, если изображения ещё не успели подтянуться с БД при старте сервера
-            if (!SITE_CONFIG.images || (
-                !SITE_CONFIG.images.heroMainPhoto &&
-                !SITE_CONFIG.images.heroPhoto1 &&
-                !SITE_CONFIG.images.heroPhoto2 &&
-                !SITE_CONFIG.images.couple &&
-                !SITE_CONFIG.images.restaurant
-            )) {
-                setTimeout(async () => {
-                    try {
-                        const resp2 = await fetch('/api/config');
-                        if (resp2.ok) {
-                            const cfg2 = await resp2.json();
-                            SITE_CONFIG = { ...SITE_CONFIG, ...cfg2 };
-                            updateSiteDisplay();
-                            console.log('🔄 Повторная загрузка конфигурации выполнена');
-                        }
-                    } catch (e) {
-                        // игнорируем
-                    }
-                }, 1200);
-            }
         }
     } catch (error) {
         console.log('⚠️ Используется локальная конфигурация');

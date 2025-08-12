@@ -4,7 +4,6 @@ const helmet = require('helmet');
 const compression = require('compression');
 const path = require('path');
 const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -84,12 +83,6 @@ const upload = multer({
 // Статические файлы
 app.use(express.static(path.join(__dirname), {
     maxAge: '1d',
-    etag: true
-}));
-
-// Отдаём статику из /uploads для локально сохранённых изображений
-app.use('/uploads', express.static(path.join(__dirname, 'uploads'), {
-    maxAge: '7d',
     etag: true
 }));
 
@@ -961,47 +954,8 @@ app.post('/api/upload-image', upload.single('image'), async (req, res) => {
         }
 
         if (!SUPABASE_CONFIG.client) {
-            // Локальный fallback: сохраняем файл в /uploads и обновляем siteConfig
-            try {
-                const { type } = req.body;
-                const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
-                if (!validTypes.includes(type)) {
-                    return res.status(400).json({ error: 'Неверный тип изображения' });
-                }
-
-                const uploadsDir = path.join(__dirname, 'uploads', 'wedding-images');
-                fs.mkdirSync(uploadsDir, { recursive: true });
-
-                const originalExt = req.file.originalname.includes('.') ? req.file.originalname.split('.').pop() : 'jpg';
-                const fileName = `${type}_${Date.now()}.${originalExt}`;
-                const absFilePath = path.join(uploadsDir, fileName);
-                fs.writeFileSync(absFilePath, req.file.buffer);
-
-                const publicUrl = `/uploads/wedding-images/${fileName}`;
-
-                const photoMapping = {
-                    'couple': 'couple',
-                    'restaurant': 'restaurant',
-                    'hero1': 'heroPhoto1',
-                    'hero2': 'heroPhoto2',
-                    'heromain': 'heroMainPhoto'
-                };
-                siteConfig.images[photoMapping[type]] = publicUrl;
-                await saveSiteConfig();
-
-                console.log(`✅ Локально сохранено изображение ${type}: ${publicUrl}`);
-
-                return res.json({
-                    success: true,
-                    message: 'Изображение успешно загружено (локально)',
-                    imageUrl: publicUrl,
-                    fileName,
-                    type
-                });
-            } catch (e) {
-                console.error('Ошибка локального сохранения:', e);
-                return res.status(500).json({ error: 'Не удалось сохранить файл локально' });
-            }
+            console.error('❌ Supabase не настроен');
+            return res.status(500).json({ error: 'Supabase не настроен' });
         }
 
         const { type } = req.body;
