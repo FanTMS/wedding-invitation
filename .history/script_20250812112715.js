@@ -101,12 +101,6 @@ function updateSiteDisplay() {
     document.querySelectorAll('[data-restaurant-address]').forEach(el => {
         el.textContent = SITE_CONFIG.restaurant.address;
     });
-    // Обновляем адрес ЗАГС
-    document.querySelectorAll('[data-zags-address]').forEach(el => {
-        if (SITE_CONFIG.zags && SITE_CONFIG.zags.address) {
-            el.textContent = SITE_CONFIG.zags.address;
-        }
-    });
     
     // Обновляем дедлайн
     const deadlineEl = document.querySelector('.rsvp-description strong');
@@ -322,14 +316,11 @@ function showSuccessModal(groupUrl) {
         }
     }
     modal.classList.add('show');
-    // Блокируем прокрутку под модалкой
-    document.body.style.overflow = 'hidden';
 }
 
 function closeModal() {
     const modal = document.getElementById('success-modal');
     modal.classList.remove('show');
-    document.body.style.overflow = '';
 }
 
 function showErrorMessage(message) {
