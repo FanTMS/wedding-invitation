@@ -472,11 +472,28 @@ function initMobileOptimizations() {
         });
     });
     
-    // Корректная прокрутка: ничего не блокируем, разрешаем браузеру обрабатывать жесты
-    // Убираем кастомную обработку touchmove, чтобы не мешать прокрутке вверх
+    // Оптимизация touch событий
+    let touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
     
-    // Лёгкая оптимизация без вмешательства в нативную прокрутку
-    document.addEventListener('scroll', function() { /* passive no-op to keep smooth */ }, { passive: true });
+    // Не блокируем жест прокрутки вверх, чтобы не ломать возврат к началу в WebView/Telegram
+    document.addEventListener('touchmove', function() { /* no-op */ }, { passive: true });
+    
+    // Улучшение производительности прокрутки
+    let ticking = false;
+    function updateScrollPosition() {
+        // Оптимизированная обработка прокрутки
+        ticking = false;
+    }
+    
+    document.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateScrollPosition);
+            ticking = true;
+        }
+    }, { passive: true });
     
     console.log('📱 Мобильные оптимизации активированы');
 }

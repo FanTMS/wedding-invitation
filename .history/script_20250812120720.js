@@ -88,18 +88,11 @@ function updateSiteDisplay() {
     const dateMonth = document.querySelector('.date-month');
     const overlayDateNumber = document.querySelector('.overlay-date-number');
     const overlayDateMonth = document.querySelector('.overlay-date-month');
-    const weddingTextEl = document.querySelector('.wedding-text');
     
     if (dateNumber) dateNumber.textContent = date.getDate();
     if (dateMonth) dateMonth.textContent = date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).toUpperCase();
     if (overlayDateNumber) overlayDateNumber.textContent = date.getDate();
     if (overlayDateMonth) overlayDateMonth.textContent = date.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' }).toUpperCase();
-    if (weddingTextEl && !isNaN(date.getTime())) {
-        const day = date.getDate();
-        const month = date.toLocaleDateString('ru-RU', { month: 'long' });
-        const year = date.getFullYear();
-        weddingTextEl.textContent = `Приглашаем вас ${day} ${month} ${year} года.`;
-    }
     
     // Обновляем ресторан
     document.querySelectorAll('[data-restaurant-name]').forEach(el => {
@@ -472,11 +465,28 @@ function initMobileOptimizations() {
         });
     });
     
-    // Корректная прокрутка: ничего не блокируем, разрешаем браузеру обрабатывать жесты
-    // Убираем кастомную обработку touchmove, чтобы не мешать прокрутке вверх
+    // Оптимизация touch событий
+    let touchStartY = 0;
+    document.addEventListener('touchstart', function(e) {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
     
-    // Лёгкая оптимизация без вмешательства в нативную прокрутку
-    document.addEventListener('scroll', function() { /* passive no-op to keep smooth */ }, { passive: true });
+    // Не блокируем жест прокрутки вверх, чтобы не ломать возврат к началу в WebView/Telegram
+    document.addEventListener('touchmove', function() { /* no-op */ }, { passive: true });
+    
+    // Улучшение производительности прокрутки
+    let ticking = false;
+    function updateScrollPosition() {
+        // Оптимизированная обработка прокрутки
+        ticking = false;
+    }
+    
+    document.addEventListener('scroll', function() {
+        if (!ticking) {
+            requestAnimationFrame(updateScrollPosition);
+            ticking = true;
+        }
+    }, { passive: true });
     
     console.log('📱 Мобильные оптимизации активированы');
 }

@@ -64,9 +64,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
-    /* Разрешаем вертикальную прокрутку жестами на мобильных */
-    touch-action: pan-y;
-    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
 }
 
 /* Экран загрузки */
