@@ -298,18 +298,8 @@ function initRSVPForm() {
 }
 
 // Модальные окна
-function showSuccessModal(groupUrl) {
+function showSuccessModal() {
     const modal = document.getElementById('success-modal');
-    const inviteWrap = document.getElementById('group-invite');
-    const inviteLink = document.getElementById('group-link');
-    if (inviteWrap && inviteLink) {
-        if (groupUrl) {
-            inviteLink.href = groupUrl;
-            inviteWrap.style.display = 'block';
-        } else {
-            inviteWrap.style.display = 'none';
-        }
-    }
     modal.classList.add('show');
 }
 

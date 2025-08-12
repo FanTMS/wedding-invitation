@@ -83,14 +83,6 @@ body {
     transition: opacity 0.5s ease, visibility 0.5s ease;
 }
 
-/* Центровка экрана загрузки в iOS WebView/Telegram */
-html, body.loading {
-    height: 100%;
-}
-body.loading {
-    overflow: hidden;
-}
-
 .loading-screen.hidden {
     opacity: 0;
     visibility: hidden;

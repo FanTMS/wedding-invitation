@@ -734,17 +734,21 @@ app.post('/api/rsvp', async (req, res) => {
         const telegramMessage = formatGuestResponse(responseData);
         await sendTelegramMessage(TELEGRAM_CONFIG.chatId, telegramMessage);
         
-        // Подготовим ссылку на группу, чтобы фронт показал кликабельную кнопку
-        let groupUrl = null;
-        if (siteConfig.guestGroup.enabled && siteConfig.guestGroup.url) {
-            groupUrl = siteConfig.guestGroup.url;
+        // Отправляем приглашение в группу гостю (если настроено)
+        if (siteConfig.guestGroup.enabled && siteConfig.guestGroup.url && phone) {
+            const inviteMessage = siteConfig.guestGroup.inviteMessage.replace('{GROUP_URL}', siteConfig.guestGroup.url);
+            
+            // Пытаемся отправить приглашение через Telegram (если у нас есть chat_id гостя)
+            // Пока что просто логируем, что нужно отправить приглашение
+            console.log(`📨 Нужно отправить приглашение в группу гостю ${fullName}: ${inviteMessage}`);
+            
+            // TODO: Здесь можно добавить логику отправки SMS или другого способа связи
         }
         
         res.json({ 
             success: true, 
             message: 'Ответ сохранен успешно',
-            groupInvite: siteConfig.guestGroup.enabled ? 'Приглашение в группу' : null,
-            groupUrl
+            groupInvite: siteConfig.guestGroup.enabled ? 'Приглашение в группу будет отправлено' : null
         });
     } catch (error) {
         console.error('Ошибка обработки RSVP:', error);

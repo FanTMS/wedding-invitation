@@ -298,18 +298,8 @@ function initRSVPForm() {
 }
 
 // Модальные окна
-function showSuccessModal(groupUrl) {
+function showSuccessModal() {
     const modal = document.getElementById('success-modal');
-    const inviteWrap = document.getElementById('group-invite');
-    const inviteLink = document.getElementById('group-link');
-    if (inviteWrap && inviteLink) {
-        if (groupUrl) {
-            inviteLink.href = groupUrl;
-            inviteWrap.style.display = 'block';
-        } else {
-            inviteWrap.style.display = 'none';
-        }
-    }
     modal.classList.add('show');
 }
 
@@ -457,8 +447,15 @@ function initMobileOptimizations() {
         touchStartY = e.touches[0].clientY;
     }, { passive: true });
     
-    // Не блокируем жест прокрутки вверх, чтобы не ломать возврат к началу в WebView/Telegram
-    document.addEventListener('touchmove', function() { /* no-op */ }, { passive: true });
+    document.addEventListener('touchmove', function(e) {
+        const touchY = e.touches[0].clientY;
+        const touchDiff = touchStartY - touchY;
+        
+        // Предотвращение bounce эффекта на iOS
+        if (document.body.scrollTop === 0 && touchDiff < 0) {
+            e.preventDefault();
+        }
+    }, { passive: false });
     
     // Улучшение производительности прокрутки
     let ticking = false;

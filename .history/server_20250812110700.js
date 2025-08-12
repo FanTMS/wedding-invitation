@@ -400,7 +400,7 @@ Hero фото 2: ${siteConfig.images.heroPhoto2 ? '✅ Загружено' : '�
 // Обработка загрузки фотографий
 async function handlePhotoUpload(chatId, photos, caption) {
     const photoType = caption.toLowerCase().trim();
-    const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain', 'comparison', 'zags'];
+    const validTypes = ['couple', 'restaurant', 'hero1', 'hero2', 'heromain'];
     
     if (!validTypes.includes(photoType)) {
         return await sendTelegramMessage(chatId, `❌ Неизвестный тип фото. Используйте:\n- couple (фото пары)\n- restaurant (фото ресторана)\n- hero1 (фоновое фото 1)\n- hero2 (фоновое фото 2)\n- heromain (главное фото)`);
@@ -427,9 +427,7 @@ async function handlePhotoUpload(chatId, photos, caption) {
                 'restaurant': 'restaurant',
                 'hero1': 'heroPhoto1',
                 'hero2': 'heroPhoto2',
-                'heromain': 'heroMainPhoto',
-                'comparison': 'comparisonPhoto',
-                'zags': 'zagsPhoto'
+                'heromain': 'heroMainPhoto'
             };
             
             // Обновляем конфигурацию
@@ -580,9 +578,7 @@ async function loadSiteConfig() {
                 'restaurant': 'restaurant',
                 'hero1': 'heroPhoto1',
                 'hero2': 'heroPhoto2',
-                'heromain': 'heroMainPhoto',
-                'comparison': 'comparisonPhoto',
-                'zags': 'zagsPhoto'
+                'heromain': 'heroMainPhoto'
             };
 
             imagesData.forEach(img => {
@@ -734,17 +730,21 @@ app.post('/api/rsvp', async (req, res) => {
         const telegramMessage = formatGuestResponse(responseData);
         await sendTelegramMessage(TELEGRAM_CONFIG.chatId, telegramMessage);
         
-        // Подготовим ссылку на группу, чтобы фронт показал кликабельную кнопку
-        let groupUrl = null;
-        if (siteConfig.guestGroup.enabled && siteConfig.guestGroup.url) {
-            groupUrl = siteConfig.guestGroup.url;
+        // Отправляем приглашение в группу гостю (если настроено)
+        if (siteConfig.guestGroup.enabled && siteConfig.guestGroup.url && phone) {
+            const inviteMessage = siteConfig.guestGroup.inviteMessage.replace('{GROUP_URL}', siteConfig.guestGroup.url);
+            
+            // Пытаемся отправить приглашение через Telegram (если у нас есть chat_id гостя)
+            // Пока что просто логируем, что нужно отправить приглашение
+            console.log(`📨 Нужно отправить приглашение в группу гостю ${fullName}: ${inviteMessage}`);
+            
+            // TODO: Здесь можно добавить логику отправки SMS или другого способа связи
         }
         
         res.json({ 
             success: true, 
             message: 'Ответ сохранен успешно',
-            groupInvite: siteConfig.guestGroup.enabled ? 'Приглашение в группу' : null,
-            groupUrl
+            groupInvite: siteConfig.guestGroup.enabled ? 'Приглашение в группу будет отправлено' : null
         });
     } catch (error) {
         console.error('Ошибка обработки RSVP:', error);
